@@ -1,0 +1,1658 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Minisalvavidas</title>
+<meta name="description" content="Minisalvavidas: escribe cómo te sientes, en anónimo o con tu nombre, detecta señales a tiempo y accede a herramientas, contenidos, podcasts y especialistas en salud mental.">
+<meta name="theme-color" content="#0F2A4A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='70' fill='none' stroke='%23fff' stroke-width='36'/%3E%3Ccircle cx='100' cy='100' r='70' fill='none' stroke='%23F2435A' stroke-width='36' stroke-dasharray='54.98 54.98'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --deep:#0F2A4A;      /* agua profunda */
+  --ink:#0F2A4A;
+  --ink-2:#4A6382;
+  --foam:#F1F9FB;      /* espuma */
+  --paper:#FFFFFF;
+  --pool:#38C9C1;      /* piscina */
+  --pool-deep:#0F7A86;
+  --buoy:#F2435A;      /* salvavidas: solo para ayuda */
+  --sun:#FFC94D;
+  --lilac:#A99BFF;
+  --tide:#FF8A3D;
+  --line:#D5E6EE;
+  --soft:#E3F3F6;
+  --btn-bg:var(--deep);
+  --btn-fg:#fff;
+  --shadow:0 18px 40px -22px rgba(15,42,74,.45);
+  --tabbar:0px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#E8F4F8; --ink-2:#A3BBCF; --foam:#0A1A2E; --paper:#11263F; --line:#22405F; --soft:#14304C;
+    --btn-bg:#E8F4F8; --btn-fg:#0A1A2E; --shadow:0 18px 40px -22px rgba(0,0,0,.7);
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--foam);color:var(--ink);font:400 1.0625rem/1.6 'Figtree',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--tabbar) + env(safe-area-inset-bottom))}
+h1,h2,h3,h4{font-family:'Bricolage Grotesque',system-ui,sans-serif;line-height:1.08;letter-spacing:-.015em;margin:0;font-weight:700}
+p{margin:0}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--pool);outline-offset:3px;border-radius:8px}
+[hidden]{display:none!important}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Barra superior ---------- */
+.topbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--foam) 84%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:14px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font:800 1.3rem/1 'Bricolage Grotesque',sans-serif;text-decoration:none;letter-spacing:-.02em}
+.brand svg{width:34px;height:34px;flex:none}
+.nav{display:flex;gap:2px;margin-left:auto}
+.nav a{padding:8px 13px;border-radius:999px;color:var(--ink-2);text-decoration:none;font-weight:600;font-size:.95rem;white-space:nowrap}
+.nav a:hover{color:var(--ink);background:var(--soft)}
+.nav a[aria-current=page]{background:var(--btn-bg);color:var(--btn-fg)}
+.help-btn{display:inline-flex;align-items:center;gap:8px;background:var(--buoy);color:#fff;border:0;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 10px 24px -12px var(--buoy)}
+.help-btn svg{width:18px;height:18px}
+.help-btn:hover{filter:brightness(1.06)}
+
+/* Tabbar móvil */
+.tabbar{display:none}
+@media (max-width: 920px){
+  :root{--tabbar:68px}
+  .nav{display:none}
+  .help-btn{margin-left:auto;padding:9px 13px;font-size:.9rem}
+  .tabbar{display:grid;grid-template-columns:repeat(6,1fr);position:fixed;left:0;right:0;bottom:0;z-index:60;height:calc(var(--tabbar) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:var(--paper);border-top:1px solid var(--line)}
+  .tabbar a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;color:var(--ink-2);font-size:.68rem;font-weight:600}
+  .tabbar svg{width:22px;height:22px}
+  .tabbar a[aria-current=page]{color:var(--pool-deep)}
+  @media (prefers-color-scheme: dark){.tabbar a[aria-current=page]{color:var(--pool)}}
+}
+
+/* ---------- Botones y controles ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:13px 22px;font-weight:700;cursor:pointer;text-decoration:none;background:var(--btn-bg);color:var(--btn-fg);transition:transform .15s ease}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--line)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 2px var(--ink-2)}
+.btn.pool{background:var(--pool);color:#05333A}
+.btn.buoy{background:var(--buoy);color:#fff}
+.btn.sm{padding:9px 15px;font-size:.92rem}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:0;border-radius:999px;padding:8px 14px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line);font-weight:600;font-size:.92rem;cursor:pointer;color:var(--ink-2)}
+.chip[aria-pressed=true]{background:var(--btn-bg);color:var(--btn-fg);box-shadow:none}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-weight:600;font-size:.95rem}
+.field small{color:var(--ink-2);font-size:.85rem}
+.input,select.input,textarea.input{width:100%;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--paper);outline:none}
+.input:focus{border-color:var(--pool)}
+textarea.input{min-height:130px;resize:vertical;line-height:1.55}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;color:var(--ink-2);margin:6px 0 16px}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--pool-deep);flex:none}
+.muted{color:var(--ink-2)}
+.tiny{font-size:.85rem}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;background:var(--deep);color:#fff;overflow:hidden;padding:72px 0 150px}
+.hero::before{content:"";position:absolute;inset:-40% -10% auto auto;width:720px;height:720px;border-radius:50%;background:radial-gradient(circle,rgba(56,201,193,.32),transparent 62%);pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(2.9rem,7.4vw,6.2rem);font-weight:800;line-height:.95;letter-spacing:-.035em;max-width:11ch}
+.hero .lede{font-size:clamp(1.05rem,1.6vw,1.22rem);color:#C9DDEB;max-width:52ch;margin-top:22px;line-height:1.6}
+.mood{margin-top:34px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:28px;padding:20px;max-width:600px}
+.mood h2{font-size:1.35rem;font-weight:700}
+.mood .row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+.mood button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px 12px;border-radius:20px;border:0;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;font-weight:600;font-size:.86rem;transition:background .2s,transform .2s}
+.mood button span{font-size:1.9rem;line-height:1}
+.mood button:hover{background:var(--pool);color:#05333A;transform:translateY(-3px)}
+.mood .note{margin-top:12px;font-size:.88rem;color:#9FBCD1}
+.scene{position:relative;display:grid;place-items:center;min-height:380px}
+.scene .halo{position:absolute;width:min(380px,80%);aspect-ratio:1;border-radius:50%;border:2px dashed rgba(255,255,255,.18)}
+.scene .buoy{width:min(330px,72%);aspect-ratio:1;height:auto;filter:drop-shadow(0 30px 30px rgba(0,0,0,.35));animation:bob 5.5s ease-in-out infinite}
+.scene .tag-float{position:absolute;background:#fff;color:var(--deep);border-radius:16px;padding:10px 14px;font-weight:700;font-size:.9rem;box-shadow:var(--shadow)}
+.scene .t1{top:12%;left:0}
+.scene .t2{bottom:16%;right:0;background:var(--sun)}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-16px) rotate(6deg)}}
+.waves{position:absolute;left:0;right:0;bottom:-1px;height:120px;overflow:hidden;pointer-events:none}
+.waves svg{position:absolute;bottom:0;left:0;width:200%;height:100%;animation:drift 16s linear infinite}
+.waves .back{opacity:.35;animation-duration:24s;animation-direction:reverse}
+.waves path{fill:var(--foam)}
+@keyframes drift{to{transform:translateX(-50%)}}
+@media (max-width: 920px){
+  .hero{padding:40px 0 120px}
+  .hero .wrap{grid-template-columns:1fr}
+  .scene{order:-1;min-height:200px}
+  .scene .buoy{width:170px;height:170px}
+  .scene .halo{width:220px}
+  .scene .tag-float{font-size:.78rem;padding:7px 10px}
+  .scene .t1{top:8%;left:4%}
+  .scene .t2{bottom:6%;right:4%}
+}
+@media (max-width: 480px){
+  .mood{padding:14px;border-radius:22px}
+  .mood .row{gap:5px}
+  .mood button{font-size:.72rem;padding:10px 2px}
+  .mood button span{font-size:1.5rem}
+}
+
+/* ---------- Secciones ---------- */
+.section{padding:64px 0}
+.section.tight{padding:36px 0}
+.head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:26px;flex-wrap:wrap}
+.head h2{font-size:clamp(1.9rem,4vw,3rem);max-width:20ch}
+.head p{color:var(--ink-2);max-width:56ch;margin-top:8px}
+.page-title{padding:44px 0 10px}
+.page-title h1{font-size:clamp(2.2rem,5.4vw,4rem);font-weight:800;letter-spacing:-.03em;max-width:16ch}
+.page-title p{color:var(--ink-2);max-width:60ch;margin-top:12px;font-size:1.1rem}
+
+/* Rutas */
+.routes{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:auto auto;gap:16px}
+.route{position:relative;border-radius:32px;padding:28px;overflow:hidden;display:flex;flex-direction:column;gap:12px;min-height:220px;border:0;text-align:left;cursor:pointer;color:inherit}
+.route h3{font-size:1.7rem}
+.route p{max-width:40ch}
+.route .go{margin-top:auto;font-weight:700;display:inline-flex;align-items:center;gap:8px}
+.route .go svg{width:20px;height:20px;transition:transform .2s}
+.route:hover .go svg{transform:translateX(4px)}
+.route.self{grid-row:span 2;background:var(--pool);color:#05333A;min-height:460px}
+.route.self .deco{position:absolute;right:-60px;bottom:-60px;width:300px;height:300px;opacity:.9}
+.route.expert{background:var(--lilac);color:#1D1650}
+.route.now{background:var(--buoy);color:#fff}
+@media (max-width: 760px){.routes{grid-template-columns:1fr}.route.self{grid-row:auto;min-height:300px}.route.self .deco{width:200px;height:200px;right:-40px;bottom:-40px}}
+
+/* Cómo funciona */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;counter-reset:s}
+.step{border-top:3px solid var(--ink);padding-top:18px}
+.step b{display:block;font:800 3.4rem/1 'Bricolage Grotesque',sans-serif;color:var(--pool-deep);margin-bottom:10px}
+@media (prefers-color-scheme: dark){.step b{color:var(--pool)}}
+.step h3{font-size:1.35rem;margin-bottom:6px}
+.step p{color:var(--ink-2)}
+@media (max-width: 760px){.steps{grid-template-columns:1fr;gap:22px}}
+
+/* Banda privacidad */
+.privacy{background:var(--paper);border-radius:36px;padding:36px;display:grid;grid-template-columns:.9fr 1.1fr;gap:30px;align-items:center;border:1px solid var(--line)}
+.privacy h2{font-size:clamp(1.8rem,3.4vw,2.6rem)}
+.privacy ul{margin:0;padding:0;list-style:none;display:grid;gap:14px}
+.privacy li{display:flex;gap:12px;align-items:flex-start}
+.privacy li svg{width:24px;height:24px;flex:none;color:var(--pool-deep);margin-top:2px}
+@media (prefers-color-scheme: dark){.privacy li svg{color:var(--pool)}}
+@media (max-width: 760px){.privacy{grid-template-columns:1fr;padding:24px;border-radius:28px}}
+
+/* ---------- Check-in ---------- */
+.flow-shell{max-width:760px;margin:0 auto;padding:30px 20px 60px}
+.flow-top{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.flow-top .bar{flex:1;height:10px;border-radius:999px;background:var(--soft);overflow:hidden}
+.flow-top .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pool-deep),var(--pool));border-radius:999px;transition:width .45s ease}
+.flow-top .count{font-size:.85rem;color:var(--ink-2);font-weight:600;min-width:62px;text-align:right}
+.icon-btn{width:42px;height:42px;border-radius:50%;border:0;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--line);display:grid;place-items:center;cursor:pointer;flex:none}
+.icon-btn svg{width:20px;height:20px}
+.icon-btn[disabled]{opacity:.35;cursor:default}
+.card-flow{background:var(--paper);border-radius:32px;padding:30px;box-shadow:var(--shadow);border:1px solid var(--line);animation:rise .35s ease}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+.bot{display:flex;gap:14px;align-items:flex-start;margin-bottom:22px}
+.bot-av{width:44px;height:44px;flex:none;animation:bob 5.5s ease-in-out infinite}
+.bot .who{font-weight:700;font-size:.85rem;color:var(--pool-deep)}
+@media (prefers-color-scheme: dark){.bot .who{color:var(--pool)}}
+.bot .ctx{font-size:.95rem;color:var(--ink-2);margin-bottom:4px}
+.q{font-size:clamp(1.45rem,3.3vw,2.1rem);font-weight:700;outline:none}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:16px 18px;border-radius:20px;border:0;background:var(--foam);box-shadow:inset 0 0 0 1.5px var(--line);cursor:pointer;font-weight:600;transition:box-shadow .15s,background .15s}
+.opt:hover{box-shadow:inset 0 0 0 2px var(--pool)}
+.opt .k{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:var(--paper);font-size:.85rem;color:var(--ink-2);box-shadow:inset 0 0 0 1.5px var(--line);flex:none}
+.opt .dots{margin-left:auto;display:flex;gap:4px}
+.opt .dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.opt .dots i.on{background:var(--pool-deep)}
+@media (prefers-color-scheme: dark){.opt .dots i.on{background:var(--pool)}}
+.opts.big{grid-template-columns:1fr 1fr}
+.opts.big .opt{flex-direction:column;align-items:flex-start;gap:8px;padding:22px}
+.opts.big .opt strong{font:700 1.2rem/1.2 'Bricolage Grotesque',sans-serif}
+.opts.big .opt span{font-weight:500;color:var(--ink-2);font-size:.95rem}
+.opts.big .opt svg{width:34px;height:34px}
+.opts.moods{grid-template-columns:repeat(5,1fr)}
+.opts.moods .opt{flex-direction:column;gap:6px;padding:16px 6px;text-align:center;align-items:center;font-size:.85rem}
+.opts.moods .opt span{font-size:1.9rem}
+@media (max-width:560px){.opts.big{grid-template-columns:1fr}.opts.moods{grid-template-columns:repeat(3,1fr)}.card-flow{padding:22px;border-radius:26px}}
+.flow-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.flow-foot{margin-top:18px;font-size:.85rem;color:var(--ink-2);text-align:center}
+.kbd-hint{display:inline-block;margin-top:14px;font-size:.82rem;color:var(--ink-2)}
+@media (hover:none){.kbd-hint,.opt .k{display:none}}
+
+/* ---------- Resultado ---------- */
+.result-hero{border-radius:36px;padding:36px;color:#fff;position:relative;overflow:hidden;background:var(--deep)}
+.result-hero .lvl{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 14px;font-weight:700;font-size:.9rem;color:#05333A}
+.result-hero h1{font-size:clamp(2.3rem,6vw,4.4rem);font-weight:800;letter-spacing:-.03em;margin:16px 0 12px;max-width:14ch}
+.result-hero p{color:#C9DDEB;max-width:60ch;font-size:1.08rem}
+.result-hero .water{position:absolute;left:0;right:0;bottom:0;height:var(--h,30%);background:rgba(56,201,193,.18);transition:height 1.2s ease}
+.result-hero .inner{position:relative}
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.meter{background:var(--paper);border:1px solid var(--line);border-radius:26px;padding:22px}
+.meter h3{font-size:1.15rem}
+.meter .track{height:14px;border-radius:999px;background:var(--soft);margin:14px 0 8px;overflow:hidden}
+.meter .track i{display:block;height:100%;border-radius:999px;width:0;transition:width 1s ease}
+.meter .row{display:flex;justify-content:space-between;font-size:.88rem;color:var(--ink-2)}
+@media (max-width:640px){.meters{grid-template-columns:1fr}.result-hero{padding:26px;border-radius:28px}}
+.recs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.rec{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:8px;text-align:left;cursor:pointer;color:inherit}
+.rec:hover{border-color:var(--pool)}
+.rec .ico{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;margin-bottom:4px}
+.rec .ico svg{width:22px;height:22px}
+.rec h3{font-size:1.15rem}
+.rec p{color:var(--ink-2);font-size:.95rem}
+.rec.priority{grid-column:1/-1;background:var(--lilac);color:#1D1650;border:0}
+.rec.priority p{color:#2E2670}
+@media (max-width:820px){.recs{grid-template-columns:1fr}}
+.alert{display:flex;gap:16px;align-items:flex-start;background:color-mix(in srgb,var(--buoy) 12%,var(--paper));border:1.5px solid var(--buoy);border-radius:24px;padding:20px;margin-top:16px}
+.alert svg{width:28px;height:28px;color:var(--buoy);flex:none}
+.alert h3{font-size:1.15rem;margin-bottom:4px}
+.disclaimer{font-size:.88rem;color:var(--ink-2);margin-top:22px;max-width:75ch}
+
+/* ---------- Biblioteca ---------- */
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+.search{flex:1;min-width:220px;position:relative}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--ink-2)}
+.search input{padding-left:42px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{display:flex;flex-direction:column;gap:10px;text-align:left;border:0;cursor:pointer;color:inherit;background:var(--paper);border-radius:26px;padding:22px;box-shadow:inset 0 0 0 1px var(--line);min-height:210px;position:relative;overflow:hidden}
+.card:hover{box-shadow:inset 0 0 0 2px var(--c,var(--pool))}
+.card .tag{align-self:flex-start;font-size:.8rem;font-weight:700;padding:5px 11px;border-radius:999px;background:var(--c,var(--pool));color:#0F2A4A}
+.card h3{font-size:1.3rem}
+.card p{color:var(--ink-2);font-size:.95rem}
+.card .meta{margin-top:auto;font-size:.85rem;color:var(--ink-2);display:flex;gap:10px;align-items:center}
+.card .mine{position:absolute;top:18px;right:18px;font-size:.75rem;font-weight:700;color:var(--ink-2)}
+.card.feature{grid-column:span 2;background:var(--c,var(--pool));color:#0F2A4A;box-shadow:none;min-height:260px}
+.card.feature .tag{background:rgba(255,255,255,.6)}
+.card.feature p,.card.feature .meta{color:#183A5C}
+.card.feature h3{font-size:clamp(1.6rem,3vw,2.3rem);max-width:18ch}
+@media (max-width:900px){.grid{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.grid{grid-template-columns:1fr}.card.feature{grid-column:auto}}
+.empty{border:2px dashed var(--line);border-radius:26px;padding:34px;text-align:center;color:var(--ink-2)}
+.empty .btn{margin-top:14px}
+
+/* ---------- Podcasts ---------- */
+.show{display:grid;grid-template-columns:300px 1fr;gap:30px;align-items:center;background:var(--deep);color:#fff;border-radius:36px;padding:30px;overflow:hidden;position:relative}
+.cover{aspect-ratio:1;border-radius:26px;background:var(--pool);position:relative;overflow:hidden;display:grid;place-items:center}
+.cover svg.b{width:62%;aspect-ratio:1;height:auto;animation:bob 5.5s ease-in-out infinite}
+.cover .w{position:absolute;bottom:0;left:0;right:0;height:34%;background:var(--pool-deep)}
+.cover .w::before{content:"";position:absolute;top:-14px;left:0;right:0;height:28px;background:radial-gradient(circle at 14px 0,transparent 14px,var(--pool-deep) 15px) 0 0/28px 28px repeat-x}
+.cover .lbl{position:absolute;left:16px;bottom:14px;font:800 1.2rem/1 'Bricolage Grotesque',sans-serif;color:#fff}
+.show h2{font-size:clamp(2rem,4.4vw,3.4rem);font-weight:800}
+.show p{color:#C9DDEB;margin-top:10px;max-width:56ch}
+.show .actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.show .btn.ghost{color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.3)}
+@media (max-width:760px){.show{grid-template-columns:1fr;padding:22px;border-radius:28px}.cover{max-width:220px}}
+.eps{display:grid;gap:10px;margin-top:18px}
+.ep{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:14px 18px}
+.ep.playing{border-color:var(--pool);box-shadow:0 0 0 3px color-mix(in srgb,var(--pool) 30%,transparent)}
+.ep h3{font-size:1.1rem}
+.ep p{color:var(--ink-2);font-size:.92rem}
+.ep .play{width:52px;height:52px;border-radius:50%;border:0;background:var(--btn-bg);color:var(--btn-fg);display:grid;place-items:center;cursor:pointer}
+.ep .play svg{width:22px;height:22px}
+.ep .side{font-size:.85rem;color:var(--ink-2);text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.linkbtn{background:none;border:0;padding:0;color:var(--ink-2);font-weight:600;cursor:pointer;text-decoration:underline;font-size:.85rem}
+
+/* Reproductor */
+.player{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--tabbar) + 14px + env(safe-area-inset-bottom));z-index:55;width:min(760px,calc(100% - 24px));background:var(--deep);color:#fff;border-radius:24px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;box-shadow:0 24px 50px -20px rgba(0,0,0,.6)}
+.player .pp{width:46px;height:46px;border-radius:50%;border:0;background:var(--pool);color:#05333A;display:grid;place-items:center;cursor:pointer}
+.player .pp svg{width:22px;height:22px}
+.player .meta{min-width:0}
+.player .meta b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.95rem}
+.player .meta small{color:#9FBCD1;font-size:.8rem}
+.player input[type=range]{width:100%;accent-color:var(--pool);margin:4px 0 0}
+.player select{background:rgba(255,255,255,.1);border:0;border-radius:10px;padding:6px 8px;color:#fff}
+.player select option{color:#0F2A4A}
+.player .x{background:none;border:0;color:#fff;cursor:pointer;width:34px;height:34px;display:grid;place-items:center}
+.player .x svg{width:18px;height:18px}
+
+/* ---------- Especialistas ---------- */
+.banner{display:flex;gap:16px;align-items:center;background:var(--lilac);color:#1D1650;border-radius:24px;padding:18px 22px;margin-bottom:20px;flex-wrap:wrap}
+.banner p{flex:1;min-width:240px}
+.pros{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pro{background:var(--paper);border:1px solid var(--line);border-radius:28px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.pro .top{display:flex;gap:14px;align-items:center}
+.av{width:58px;height:58px;border-radius:20px;display:grid;place-items:center;font:800 1.25rem/1 'Bricolage Grotesque',sans-serif;color:#0F2A4A;flex:none}
+.pro h3{font-size:1.2rem}
+.pro .role{color:var(--ink-2);font-size:.92rem}
+.pro ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:.92rem}
+.pro li{display:flex;gap:8px;align-items:center}
+.pro li svg{width:16px;height:16px;color:var(--ink-2);flex:none}
+.pro .modes{display:flex;gap:6px;flex-wrap:wrap}
+.pro .modes span{font-size:.78rem;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--soft)}
+.pro .btn{margin-top:auto}
+@media (max-width:900px){.pros{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.pros{grid-template-columns:1fr}}
+
+/* ---------- Mi espacio ---------- */
+.me{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:28px;padding:24px}
+.panel h2{font-size:1.45rem;margin-bottom:6px}
+.panel .sub{color:var(--ink-2);font-size:.95rem;margin-bottom:14px}
+.span2{grid-column:1/-1}
+.chart svg{width:100%;height:auto;display:block}
+.list{display:grid;gap:10px}
+.item{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:18px;background:var(--foam);border:1px solid var(--line);flex-wrap:wrap}
+.item b{font-weight:700}
+.item .actions{display:flex;gap:8px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:middle}
+@media (max-width:820px){.me{grid-template-columns:1fr}}
+
+/* ---------- Diálogos ---------- */
+dialog{border:0;padding:0;background:transparent;color:var(--ink);max-width:min(640px,calc(100% - 24px));width:100%;max-height:calc(100dvh - 40px)}
+dialog::backdrop{background:rgba(6,20,38,.62);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.sheet{background:var(--paper);border-radius:30px;padding:28px;position:relative;max-height:calc(100dvh - 40px);overflow:auto}
+dialog[open] .sheet{animation:rise .3s ease}
+.sheet h2{font-size:1.8rem;margin-bottom:8px;padding-right:40px}
+.sheet .close{position:absolute;top:18px;right:18px}
+.sheet.crisis{background:var(--deep);color:#fff}
+.sheet.crisis p{color:#D3E4EF}
+.sheet.crisis .icon-btn{background:rgba(255,255,255,.1);box-shadow:none;color:#fff}
+.lines{display:grid;gap:10px;margin:20px 0}
+.line{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:14px 16px;text-decoration:none;color:#fff}
+.line .n{font:800 1.6rem/1 'Bricolage Grotesque',sans-serif;background:var(--buoy);border-radius:14px;padding:10px 12px;min-width:66px;text-align:center}
+.line small{color:#B9CFDF;display:block;font-size:.88rem}
+.line .call{font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:6px}
+.line .call svg{width:18px;height:18px}
+.tabs{display:flex;gap:6px;background:var(--soft);padding:5px;border-radius:999px;margin:12px 0 20px}
+.tabs button{flex:1;border:0;background:none;border-radius:999px;padding:9px 6px;font-weight:700;cursor:pointer;color:var(--ink-2);font-size:.92rem}
+.tabs button[aria-selected=true]{background:var(--paper);color:var(--ink);box-shadow:0 4px 12px -6px rgba(0,0,0,.25)}
+.breath{display:grid;place-items:center;padding:16px 0 6px}
+.breath .ring{width:230px;height:230px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,var(--soft) 55%,transparent 56%);position:relative}
+.breath .orb{width:120px;height:120px;border-radius:50%;background:var(--pool);transform:scale(.55);transition:transform 4s linear;box-shadow:0 0 60px -10px var(--pool)}
+.breath .lab{position:absolute;text-align:center;font:700 1.25rem/1.2 'Bricolage Grotesque',sans-serif;color:#05333A}
+.breath .lab small{display:block;font:600 .9rem 'Figtree',sans-serif}
+.center{text-align:center}
+.ground-n{font:800 4rem/1 'Bricolage Grotesque',sans-serif;color:var(--pool-deep)}
+@media (prefers-color-scheme: dark){.ground-n{color:var(--pool)}}
+.release{transition:transform 1.4s ease,opacity 1.4s ease}
+.release.go{transform:translateY(-60px) scale(.9);opacity:0}
+.slots{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px}
+.slots .chip{min-width:74px}
+.dates{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin:8px 0 14px;scrollbar-width:thin}
+.dates .chip{flex:none;text-transform:capitalize}
+.reader p{margin-bottom:14px;line-height:1.7}
+.reader .tag{display:inline-block;font-size:.8rem;font-weight:700;padding:5px 11px;border-radius:999px;color:#0F2A4A;margin-bottom:10px}
+.reader img,.reader video,.reader audio,.reader iframe{width:100%;border-radius:16px;margin:8px 0 14px;border:0}
+.reader iframe{height:60vh}
+.success{text-align:center;padding:10px 0}
+.success svg{width:84px;height:84px;margin:0 auto 10px;display:block}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:calc(var(--tabbar) + 24px);transform:translate(-50%,20px);opacity:0;background:var(--btn-bg);color:var(--btn-fg);padding:12px 18px;border-radius:14px;font-weight:600;z-index:100;transition:all .3s ease;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* Footer */
+footer{border-top:1px solid var(--line);padding:36px 0 50px;margin-top:40px;color:var(--ink-2);font-size:.9rem}
+footer .wrap{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+footer strong{color:var(--ink)}
+@media (max-width:700px){footer .wrap{grid-template-columns:1fr}}
+body.has-player footer{padding-bottom:130px}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- Símbolos SVG -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="buoy" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="70" fill="none" stroke="#FFFFFF" stroke-width="36"/>
+      <circle cx="100" cy="100" r="70" fill="none" stroke="#F2435A" stroke-width="36" stroke-dasharray="54.98 54.98" transform="rotate(-11 100 100)"/>
+      <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(15,42,74,.18)" stroke-width="2"/>
+      <circle cx="100" cy="100" r="52" fill="none" stroke="rgba(15,42,74,.18)" stroke-width="2"/>
+      <circle cx="100" cy="100" r="70" fill="none" stroke="#F6E3BF" stroke-width="3.5" stroke-dasharray="7 9" opacity=".9"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-life" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M5.6 5.6l3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"/></g></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h6a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4zM20 4h-6a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></g></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></g></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" stroke-linecap="round"/></g></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="currentColor"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></g></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M6 10l6-6 6 6M4 20h16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="i-mask" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 8c3-2 15-2 18 0 0 6-3 10-9 10S3 14 3 8z"/><path d="M7 11h3M14 11h3"/></g></symbol>
+    <symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 9h11a3 3 0 1 0-3-3M3 15h15a3 3 0 1 1-3 3M3 12h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></g></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></g></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="Minisalvavidas, inicio"><svg aria-hidden="true"><use href="#buoy"/></svg>Minisalvavidas</a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#inicio" data-nav="inicio">Inicio</a>
+      <a href="#checkin" data-nav="checkin">Check-in</a>
+      <a href="#biblioteca" data-nav="biblioteca">Contenidos</a>
+      <a href="#podcasts" data-nav="podcasts">Podcasts</a>
+      <a href="#especialistas" data-nav="especialistas">Especialistas</a>
+      <a href="#miespacio" data-nav="miespacio">Mi espacio</a>
+    </nav>
+    <button class="help-btn" data-help><svg aria-hidden="true"><use href="#i-life"/></svg>Ayuda ahora</button>
+  </div>
+</header>
+
+<nav class="tabbar" aria-label="Navegación móvil">
+  <a href="#inicio" data-nav="inicio"><svg aria-hidden="true"><use href="#i-home"/></svg>Inicio</a>
+  <a href="#checkin" data-nav="checkin"><svg aria-hidden="true"><use href="#i-chat"/></svg>Check-in</a>
+  <a href="#biblioteca" data-nav="biblioteca"><svg aria-hidden="true"><use href="#i-book"/></svg>Contenidos</a>
+  <a href="#podcasts" data-nav="podcasts"><svg aria-hidden="true"><use href="#i-mic"/></svg>Podcasts</a>
+  <a href="#especialistas" data-nav="especialistas"><svg aria-hidden="true"><use href="#i-cal"/></svg>Citas</a>
+  <a href="#miespacio" data-nav="miespacio"><svg aria-hidden="true"><use href="#i-user"/></svg>Yo</a>
+</nav>
+
+<main id="main">
+
+<!-- ================= INICIO ================= -->
+<section data-view="inicio">
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <h1>Que no te lleve la corriente.</h1>
+        <p class="lede">Escribe lo que sientes, con tu nombre o en anónimo. Te hacemos unas preguntas, detectamos señales a tiempo y te acercamos herramientas, contenidos y especialistas.</p>
+        <div class="mood" role="group" aria-labelledby="moodTitle">
+          <h2 id="moodTitle">¿Cómo te sientes hoy?</h2>
+          <div class="row" id="heroMoods"></div>
+          <p class="note">Toma unos 4 minutos. Es una orientación, no un diagnóstico.</p>
+        </div>
+      </div>
+      <div class="scene" aria-hidden="true">
+        <div class="halo"></div>
+        <svg class="buoy"><use href="#buoy"/></svg>
+        <span class="tag-float t1">Aquí te escuchamos</span>
+        <span class="tag-float t2">Anónimo si quieres</span>
+      </div>
+    </div>
+    <div class="waves" aria-hidden="true">
+      <svg class="back" viewBox="0 0 2880 120" preserveAspectRatio="none"><path d="M0 70 Q180 30 360 70 T720 70 T1080 70 T1440 70 T1800 70 T2160 70 T2520 70 T2880 70 V120 H0Z"/></svg>
+      <svg viewBox="0 0 2880 120" preserveAspectRatio="none"><path d="M0 80 Q240 40 480 80 T960 80 T1440 80 T1920 80 T2400 80 T2880 80 V120 H0Z"/></svg>
+    </div>
+  </div>
+
+  <div class="section wrap">
+    <div class="head">
+      <div>
+        <h2>Tres maneras de mantenerte a flote</h2>
+        <p>Elige según lo que necesites hoy. Puedes cambiar de camino cuando quieras.</p>
+      </div>
+    </div>
+    <div class="routes">
+      <button class="route self" data-tools="respirar">
+        <h3>Cuidarme hoy</h3>
+        <p>Herramientas de dos minutos para respirar, volver al presente y bajar el ruido de la cabeza.</p>
+        <span class="go">Abrir herramientas <svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+        <svg class="deco" aria-hidden="true"><use href="#buoy"/></svg>
+      </button>
+      <a class="route expert" href="#especialistas" style="text-decoration:none">
+        <h3>Hablar con un experto</h3>
+        <p>Psicólogos y psiquiatras con cita virtual o presencial. Tú eliges el horario.</p>
+        <span class="go">Ver especialistas <svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+      <button class="route now" data-help>
+        <h3>Necesito ayuda ahora</h3>
+        <p>Si sientes que no puedes más, hay alguien para escucharte las 24 horas, gratis.</p>
+        <span class="go">Ver líneas de ayuda <svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="section wrap tight">
+    <div class="head"><h2>Cómo funciona</h2></div>
+    <div class="steps">
+      <div class="step"><b>1</b><h3>Escribe a tu manera</h3><p>Entra en anónimo o con tu nombre y cuéntanos qué está pasando, sin filtros.</p></div>
+      <div class="step"><b>2</b><h3>Responde unas preguntas</h3><p>Un flujo corto, basado en cuestionarios usados por profesionales de salud, revisa tu ánimo y tu ansiedad.</p></div>
+      <div class="step"><b>3</b><h3>Recibe tu ruta</h3><p>Según tus respuestas te proponemos herramientas, contenidos o una cita con un especialista.</p></div>
+    </div>
+  </div>
+
+  <div class="section wrap">
+    <div class="head">
+      <div><h2>Para leer con calma</h2><p>Guías cortas y ejercicios escritos con lenguaje claro.</p></div>
+      <a class="btn ghost sm" href="#biblioteca">Ver todos los contenidos</a>
+    </div>
+    <div class="grid" id="homeContent"></div>
+  </div>
+
+  <div class="section wrap tight">
+    <div class="head">
+      <div><h2>Para escuchar en el camino</h2><p>Episodios cortos de la serie Minisalvavidas.</p></div>
+      <a class="btn ghost sm" href="#podcasts">Ir a podcasts</a>
+    </div>
+    <div class="eps" id="homeEps"></div>
+  </div>
+
+  <div class="section wrap">
+    <div class="privacy">
+      <div>
+        <h2>Lo que nos cuentas es tuyo</h2>
+        <p class="muted" style="margin-top:10px">Diseñamos Minisalvavidas para que hablar de salud mental se sienta seguro.</p>
+      </div>
+      <ul>
+        <li><svg aria-hidden="true"><use href="#i-mask"/></svg><div><b>Modo anónimo real.</b> Sin nombre, sin correo y sin cuenta.</div></li>
+        <li><svg aria-hidden="true"><use href="#i-shield"/></svg><div><b>Se queda en tu dispositivo.</b> En esta versión tus respuestas se guardan solo en tu navegador y puedes borrarlas cuando quieras.</div></li>
+        <li><svg aria-hidden="true"><use href="#i-life"/></svg><div><b>Ayuda a un toque.</b> El botón de ayuda está siempre visible, en cualquier pantalla.</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHECK-IN ================= -->
+<section data-view="checkin" hidden>
+  <div class="flow-shell">
+    <div class="flow-top">
+      <button class="icon-btn" id="flowBack" aria-label="Pregunta anterior"><svg aria-hidden="true"><use href="#i-back"/></svg></button>
+      <div class="bar" role="progressbar" aria-label="Progreso del check-in" aria-valuemin="0" aria-valuemax="100"><i id="flowBar"></i></div>
+      <span class="count" id="flowCount"></span>
+    </div>
+    <div id="flow" aria-live="polite"></div>
+    <p class="flow-foot">Si en algún momento necesitas hablar con alguien ya, toca <button class="linkbtn" data-help>Ayuda ahora</button>. <button class="linkbtn" id="flowRestart">Empezar de nuevo</button></p>
+  </div>
+</section>
+
+<!-- ================= RESULTADO ================= -->
+<section data-view="resultado" hidden>
+  <div class="wrap" style="padding-top:30px;padding-bottom:30px" id="result"></div>
+</section>
+
+<!-- ================= BIBLIOTECA ================= -->
+<section data-view="biblioteca" hidden>
+  <div class="wrap">
+    <div class="page-title">
+      <h1>Contenidos para cuidarte</h1>
+      <p>Guías, artículos y ejercicios sobre ansiedad, sueño, estrés, duelo y relaciones. También puedes subir los tuyos.</p>
+    </div>
+    <div class="toolbar">
+      <div class="search"><svg aria-hidden="true"><use href="#i-search"/></svg><input class="input" id="libSearch" type="search" placeholder="Buscar un tema, por ejemplo: dormir" aria-label="Buscar contenidos"></div>
+      <button class="btn" data-upload="contenido"><svg width="18" height="18" aria-hidden="true"><use href="#i-upload"/></svg>Subir contenido</button>
+    </div>
+    <div class="chips" id="libChips" style="margin-bottom:22px" role="group" aria-label="Filtrar por tema"></div>
+    <div class="grid" id="libGrid"></div>
+  </div>
+</section>
+
+<!-- ================= PODCASTS ================= -->
+<section data-view="podcasts" hidden>
+  <div class="wrap" style="padding-top:30px">
+    <div class="show">
+      <div class="cover" aria-hidden="true"><svg class="b"><use href="#buoy"/></svg><div class="w"></div><span class="lbl">Minisalvavidas</span></div>
+      <div>
+        <h2>Minisalvavidas, el podcast</h2>
+        <p>Episodios de cinco minutos para cuando la cabeza va muy rápido. Escúchalos en el bus, antes de dormir o entre reuniones.</p>
+        <div class="actions">
+          <button class="btn pool" id="playFirst"><svg width="18" height="18" aria-hidden="true"><use href="#i-play"/></svg>Escuchar el primero</button>
+          <button class="btn ghost" data-upload="podcast"><svg width="18" height="18" aria-hidden="true"><use href="#i-upload"/></svg>Subir episodio</button>
+        </div>
+      </div>
+    </div>
+    <div class="section tight" style="padding-left:0;padding-right:0">
+      <div class="head"><div><h2>Episodios</h2><p>Los episodios de la serie se narran con la voz de tu dispositivo. Los que subas se reproducen con su audio original.</p></div></div>
+      <div class="eps" id="eps"></div>
+    </div>
+    <div class="section tight" style="padding-left:0;padding-right:0">
+      <div class="head"><div><h2>Subidos en este dispositivo</h2><p>Episodios y entrevistas que has cargado.</p></div></div>
+      <div class="eps" id="myEps"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ESPECIALISTAS ================= -->
+<section data-view="especialistas" hidden>
+  <div class="wrap">
+    <div class="page-title">
+      <h1>Habla con un especialista</h1>
+      <p>Elige a alguien con quien te sientas cómodo o cómoda, el día y la forma de atención. Recibirás la confirmación y podrás añadirla a tu calendario.</p>
+    </div>
+    <div id="spBanner"></div>
+    <div class="toolbar">
+      <div class="chips" id="spChips" role="group" aria-label="Filtrar por modalidad"></div>
+    </div>
+    <div class="pros" id="pros"></div>
+    <p class="disclaimer">Los perfiles que ves son de ejemplo para esta demostración. En producción se conectan con la red de profesionales y aliados de salud que defina el programa.</p>
+  </div>
+</section>
+
+<!-- ================= MI ESPACIO ================= -->
+<section data-view="miespacio" hidden>
+  <div class="wrap">
+    <div class="page-title">
+      <h1 id="meTitle">Mi espacio</h1>
+      <p>Tu historial de check-ins, tus citas y tu diario. Todo vive en este dispositivo.</p>
+    </div>
+    <div class="me" id="me"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <strong>Minisalvavidas</strong>
+      <p style="margin-top:8px">Una iniciativa de bienestar de PRISA Media, inspirada en el contenido Minisalvavidas de LOS40.</p>
+      <p style="margin-top:8px">Esta herramienta orienta y acompaña. No reemplaza la valoración de un profesional de la salud ni sirve para emergencias.</p>
+    </div>
+    <div>
+      <strong>Si necesitas ayuda inmediata</strong>
+      <p style="margin-top:8px">Línea 106 en Bogotá, Línea 192 opción 4 a nivel nacional y Línea 123 para emergencias. Todas gratuitas y disponibles las 24 horas.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Reproductor -->
+<div class="player" id="player" hidden>
+  <button class="pp" id="plToggle" aria-label="Reproducir o pausar"><svg aria-hidden="true"><use href="#i-pause"/></svg></button>
+  <div class="meta">
+    <b id="plTitle"></b>
+    <small id="plSub"></small>
+    <input type="range" id="plSeek" min="0" max="100" value="0" aria-label="Posición del episodio">
+  </div>
+  <select id="plRate" aria-label="Velocidad"><option value="0.85">0.85x</option><option value="1" selected>1x</option><option value="1.25">1.25x</option><option value="1.5">1.5x</option></select>
+  <button class="x" id="plClose" aria-label="Cerrar reproductor"><svg aria-hidden="true"><use href="#i-x"/></svg></button>
+</div>
+
+<!-- Diálogo: ayuda ahora -->
+<dialog id="dlgHelp" aria-labelledby="helpTitle">
+  <div class="sheet crisis">
+    <button class="icon-btn close" data-close aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-x"/></svg></button>
+    <h2 id="helpTitle">No tienes que pasar por esto solo o sola</h2>
+    <p id="helpLead">Si estás pensando en hacerte daño o sientes que no puedes más, habla hoy con alguien. Estas líneas son gratuitas y atienden las 24 horas.</p>
+    <div class="lines">
+      <a class="line" href="tel:106"><span class="n">106</span><span><b>Línea 106, Bogotá</b><small>Escucha y orientación en salud mental.</small></span><span class="call"><svg aria-hidden="true"><use href="#i-phone"/></svg>Llamar</span></a>
+      <a class="line" href="tel:192"><span class="n">192</span><span><b>Línea 192, opción 4</b><small>Nacional. Orientación psicológica del Ministerio de Salud.</small></span><span class="call"><svg aria-hidden="true"><use href="#i-phone"/></svg>Llamar</span></a>
+      <a class="line" href="tel:123"><span class="n">123</span><span><b>Línea de emergencias</b><small>Si hay un riesgo inmediato para tu vida o la de alguien más.</small></span><span class="call"><svg aria-hidden="true"><use href="#i-phone"/></svg>Llamar</span></a>
+    </div>
+    <p class="tiny">Si estás fuera de Colombia, llama al número de emergencias de tu país. Si puedes, cuéntale también a alguien de confianza que esté cerca de ti.</p>
+    <div class="flow-actions">
+      <a class="btn buoy" href="#especialistas" data-close>Agendar con un especialista</a>
+      <button class="btn ghost" id="helpContinue" style="color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.3)" hidden>Seguir con el check-in</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Diálogo: herramientas -->
+<dialog id="dlgTools" aria-labelledby="toolsTitle">
+  <div class="sheet">
+    <button class="icon-btn close" data-close aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-x"/></svg></button>
+    <h2 id="toolsTitle">Cuidarme hoy</h2>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="respirar" aria-selected="true">Respirar</button>
+      <button role="tab" data-tab="aterrizar" aria-selected="false">Volver al presente</button>
+      <button role="tab" data-tab="soltar" aria-selected="false">Soltar</button>
+    </div>
+    <div data-pane="respirar">
+      <p class="muted">Respiración cuadrada: cuatro tiempos para inhalar, sostener, exhalar y sostener. Hazla tres o cuatro rondas.</p>
+      <div class="breath"><div class="ring"><div class="orb" id="orb"></div><div class="lab" id="breathLab">Listo<small>cuando quieras</small></div></div></div>
+      <p class="center muted tiny" id="breathRounds">Ronda 0</p>
+      <div class="flow-actions" style="justify-content:center"><button class="btn" id="breathBtn">Empezar</button></div>
+    </div>
+    <div data-pane="aterrizar" hidden>
+      <p class="muted">Técnica 5-4-3-2-1. Cuando la ansiedad sube, los sentidos te traen de vuelta al lugar donde estás.</p>
+      <div class="center" style="padding:24px 0"><div class="ground-n" id="gN">5</div><h3 id="gTxt" style="font-size:1.4rem;margin-top:10px">cosas que puedes ver</h3><p class="muted" id="gHelp" style="margin-top:8px">Nómbralas en voz baja o en tu cabeza, sin afán.</p></div>
+      <div class="flow-actions" style="justify-content:center"><button class="btn" id="gNext">Listo, siguiente</button></div>
+    </div>
+    <div data-pane="soltar" hidden>
+      <p class="muted">Escribe lo que te está dando vueltas. Cuando lo sueltes, se borra y no queda guardado en ningún lado.</p>
+      <div class="field" style="margin-top:14px"><textarea class="input release" id="releaseTxt" placeholder="Ahora mismo me preocupa…" aria-label="Lo que quieres soltar"></textarea></div>
+      <div class="flow-actions"><button class="btn" id="releaseBtn">Soltar</button></div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Diálogo: lector -->
+<dialog id="dlgReader" aria-labelledby="readerTitle">
+  <div class="sheet reader">
+    <button class="icon-btn close" data-close aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-x"/></svg></button>
+    <div id="readerBody"></div>
+  </div>
+</dialog>
+
+<!-- Diálogo: subir -->
+<dialog id="dlgUpload" aria-labelledby="upTitle">
+  <form class="sheet" id="upForm" method="dialog" novalidate>
+    <button type="button" class="icon-btn close" data-close aria-label="Cerrar"><svg aria-hidden="true"><use href="#i-x"/></svg></button>
+    <h2 id="upTitle">Subir contenido</h2>
+    <p class="muted" style="margin-bottom:18px">Se guarda en este navegador. Para publicarlo para toda la audiencia se conecta un servidor (lo explica el README).</p>
+    <input type="hidden" id="upKind">
+    <div class="field"><label for="upName">Título</label><input class="input" id="upName" required maxlength="120"></div>
+    <div class="field" id="upTypeField"><label for="upType">Tipo</label><select class="input" id="upType"><option>Artículo</option><option>Guía</option><option>Ejercicio</option><option>Video</option><option>Documento</option></select></div>
+    <div class="field"><label for="upTema">Tema</label><select class="input" id="upTema"></select></div>
+    <div class="field"><label for="upAuthor">Autor o invitado</label><input class="input" id="upAuthor" maxlength="80" placeholder="Opcional"></div>
+    <div class="field"><label for="upDesc">Descripción corta</label><input class="input" id="upDesc" maxlength="200"></div>
+    <div class="field" id="upBodyField"><label for="upBody">Texto</label><textarea class="input" id="upBody" placeholder="Escribe o pega el contenido. Deja una línea en blanco entre párrafos."></textarea></div>
+    <div class="field"><label for="upUrl">Enlace</label><input class="input" id="upUrl" type="url" placeholder="https://… (YouTube, Spotify, un artículo)"></div>
+    <div class="field"><label for="upFile">Archivo</label><input class="input" id="upFile" type="file"><small id="upFileHelp">Imagen, video, audio o PDF de hasta 60 MB.</small></div>
+    <div class="flow-actions"><button class="btn" type="submit" value="save">Guardar</button><button class="btn ghost" type="button" data-close>Cancelar</button></div>
+  </form>
+</dialog>
+
+<!-- Diálogo: agendar -->
+<dialog id="dlgBook" aria-labelledby="bookTitle">
+  <div class="sheet" id="bookBody"></div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   Utilidades
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('msv:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('msv:' + k, JSON.stringify(v)); } catch (e) { toast('No se pudo guardar en este navegador.'); } },
+  clear() { try { Object.keys(localStorage).filter(k => k.startsWith('msv:')).forEach(k => localStorage.removeItem(k)); } catch (e) {} }
+};
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const icon = (id, size) => `<svg ${size ? `width="${size}" height="${size}"` : ''} aria-hidden="true"><use href="#${id}"/></svg>`;
+const pad = n => String(n).padStart(2, '0');
+const fmtDate = iso => new Date(iso).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
+
+let toastT;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* Palabras que activan la ruta de crisis en textos libres */
+const CRISIS = /(suicid|matarme|me quiero matar|quitarme la vida|no quiero vivir|no quiero seguir viviendo|ya no quiero estar|acabar con todo|acabar con mi vida|hacerme dano|lastimarme|cortarme|mejor muert|quiero morir|morirme|desaparecer para siempre|no vale la pena vivir|sin salida)/;
+const isCrisis = txt => CRISIS.test(norm(txt));
+
+/* Almacenamiento de archivos subidos (IndexedDB) */
+const DB = {
+  db: null,
+  open() {
+    return new Promise((res, rej) => {
+      if (this.db) return res(this.db);
+      if (!('indexedDB' in window)) return rej(new Error('Sin IndexedDB'));
+      const r = indexedDB.open('minisalvavidas', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('items', { keyPath: 'id' });
+      r.onsuccess = () => { this.db = r.result; res(this.db); };
+      r.onerror = () => rej(r.error);
+    });
+  },
+  async all() {
+    try {
+      const db = await this.open();
+      return await new Promise((res, rej) => { const q = db.transaction('items').objectStore('items').getAll(); q.onsuccess = () => res(q.result || []); q.onerror = () => rej(q.error); });
+    } catch (e) { return []; }
+  },
+  async put(item) {
+    const db = await this.open();
+    return new Promise((res, rej) => { const tx = db.transaction('items', 'readwrite'); tx.objectStore('items').put(item); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+  },
+  async del(id) {
+    const db = await this.open();
+    return new Promise((res, rej) => { const tx = db.transaction('items', 'readwrite'); tx.objectStore('items').delete(id); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+  },
+  async clear() {
+    try { const db = await this.open(); await new Promise(res => { const tx = db.transaction('items', 'readwrite'); tx.objectStore('items').clear(); tx.oncomplete = res; }); } catch (e) {}
+  }
+};
+
+/* =========================================================
+   Datos
+   ========================================================= */
+const MOODS = [
+  { v: 0, e: '😌', t: 'Tranquilo' },
+  { v: 1, e: '🙂', t: 'Bien' },
+  { v: 2, e: '😐', t: 'Regular' },
+  { v: 3, e: '😮‍💨', t: 'Agotado' },
+  { v: 4, e: '😞', t: 'Mal' }
+];
+const FREQ = ['Nunca', 'Varios días', 'Más de la mitad de los días', 'Casi todos los días'];
+
+/* Basado en GAD-7 (ansiedad) y PHQ-9 (ánimo), cuestionarios de tamizaje de uso libre */
+const GAD = [
+  '¿Con qué frecuencia te has sentido nervioso o nerviosa, con ansiedad o con los nervios de punta?',
+  '¿Con qué frecuencia no has podido dejar de preocuparte o controlar tus preocupaciones?',
+  '¿Con qué frecuencia te has preocupado demasiado por diferentes cosas?',
+  '¿Con qué frecuencia te ha costado relajarte?',
+  '¿Con qué frecuencia te has sentido tan inquieto o inquieta que te cuesta quedarte quieto?',
+  '¿Con qué frecuencia te has molestado o irritado con facilidad?',
+  '¿Con qué frecuencia has sentido miedo de que algo terrible pueda pasar?'
+];
+const PHQ = [
+  '¿Con qué frecuencia has tenido poco interés o poco gusto por hacer las cosas?',
+  '¿Con qué frecuencia te has sentido decaído, triste o sin esperanza?',
+  '¿Con qué frecuencia has tenido problemas para dormir, para mantenerte dormido o has dormido demasiado?',
+  '¿Con qué frecuencia te has sentido cansado o con poca energía?',
+  '¿Con qué frecuencia has tenido poco apetito o has comido en exceso?',
+  '¿Con qué frecuencia te has sentido mal contigo mismo, como si fueras un fracaso o hubieras quedado mal con los tuyos?',
+  '¿Con qué frecuencia te ha costado concentrarte, por ejemplo al leer o ver televisión?',
+  '¿Con qué frecuencia te has movido o hablado tan lento que otros lo notaron, o has estado tan inquieto que no podías quedarte en un lugar?',
+  '¿Con qué frecuencia has pensado que estarías mejor muerto o has pensado en hacerte daño de alguna manera?'
+];
+
+const LEVELS = [
+  { name: 'Aguas tranquilas', color: '#38C9C1', water: 18,
+    text: 'Tus respuestas no muestran señales importantes de ansiedad o ánimo bajo en estas dos semanas. Sigue cuidando lo que te está funcionando y vuelve a hacer el check-in cuando lo necesites.' },
+  { name: 'Marea movida', color: '#FFC94D', water: 38,
+    text: 'Aparecen algunas señales leves. Es un buen momento para darte pausas, revisar cómo estás durmiendo y usar herramientas cortas. Si las señales siguen en dos semanas, habla con un profesional.' },
+  { name: 'Corriente fuerte', color: '#FF8A3D', water: 62,
+    text: 'Tus respuestas muestran señales moderadas que vale la pena atender. Te recomendamos hablar con un psicólogo o psicóloga en los próximos días; no tienes que esperar a sentirte peor.' },
+  { name: 'Necesitas un salvavidas', color: '#F2435A', water: 84,
+    text: 'Tus respuestas muestran señales altas. Te recomendamos hablar pronto con un profesional de salud mental. Mientras tanto, no estás solo ni sola: hay líneas gratuitas que te escuchan las 24 horas.' }
+];
+
+const TEMAS = { 'Ansiedad': '#38C9C1', 'Ánimo': '#FFC94D', 'Sueño': '#A99BFF', 'Estrés laboral': '#FF8A3D', 'Duelo': '#9ED8F2', 'Relaciones': '#FFB3C1', 'Autoestima': '#B8E986' };
+
+const CONTENT = [
+  { id: 'c1', tema: 'Ansiedad', tipo: 'Guía', min: 4, title: 'Qué hacer cuando llega un pico de ansiedad',
+    desc: 'Un plan de tres pasos para los momentos en que el cuerpo se acelera sin aviso.',
+    body: ['Un pico de ansiedad se siente como una alarma que suena aunque no haya incendio: el corazón se acelera, la respiración se vuelve corta y la mente busca el peligro. Lo primero es recordar que esa sensación sube, llega a un punto alto y baja. Suele durar minutos.',
+      'Paso uno: nombra lo que pasa. Decirte "esto es ansiedad y va a pasar" reduce la sensación de amenaza. Paso dos: alarga la exhalación. Inhala por la nariz en cuatro tiempos y suelta el aire por la boca en seis. Exhalar más largo le indica al cuerpo que puede bajar la guardia.',
+      'Paso tres: vuelve al lugar donde estás. Apoya los pies en el piso, toca una superficie y describe en tu cabeza tres cosas que ves. Si los picos se repiten varias veces a la semana o te impiden hacer tu vida, vale la pena hablar con un profesional.'] },
+  { id: 'c2', tema: 'Sueño', tipo: 'Artículo', min: 5, title: 'Siete cambios pequeños para dormir mejor',
+    desc: 'Ajustes concretos para que la noche deje de ser el momento en que todo da vueltas.',
+    body: ['Dormir mal y sentirse mal se alimentan entre sí. No hace falta cambiarlo todo de una vez: elige uno o dos de estos ajustes y sostenlos dos semanas.',
+      'Levántate a la misma hora todos los días, incluso el fin de semana. Busca luz natural en la mañana. Deja la cafeína después del mediodía. Baja la intensidad de las pantallas una hora antes de acostarte. Usa la cama para dormir y no para trabajar.',
+      'Si das vueltas más de veinte minutos, levántate, haz algo tranquilo con luz baja y vuelve cuando tengas sueño. Y si la cabeza no para, escribe en un papel lo que te preocupa y lo que harás mañana con eso: sacarlo de la mente ayuda a soltarlo.'] },
+  { id: 'c3', tema: 'Estrés laboral', tipo: 'Artículo', min: 4, title: 'Señales de que el trabajo te está pasando factura',
+    desc: 'Cuando el cansancio ya no se va con el fin de semana.',
+    body: ['El agotamiento laboral no llega de un día para otro. Suele mostrarse como cansancio que no se recupera con descanso, distancia o cinismo frente a lo que antes te importaba, y la sensación de que nada de lo que haces alcanza.',
+      'Otras señales: irritabilidad con personas cercanas, dolores de cabeza o de espalda frecuentes, dificultad para desconectarte en la noche y domingos que se sienten como una cuenta regresiva.',
+      'Algunas acciones que ayudan: define una hora de cierre y respétala, agenda pausas cortas como si fueran reuniones y conversa con tu líder sobre prioridades reales. Si llevas semanas así, una conversación con un profesional puede ayudarte a ordenar lo que está pasando.'] },
+  { id: 'c4', tema: 'Ánimo', tipo: 'Guía', min: 5, title: 'Moverte antes de tener ganas',
+    desc: 'La activación conductual explica por qué la motivación muchas veces llega después de actuar.',
+    body: ['Cuando el ánimo baja, es común esperar a tener ganas para hacer las cosas. El problema es que las ganas no llegan, hacemos menos, nos sentimos peor y el ciclo se repite.',
+      'La activación conductual, una técnica con mucha evidencia, propone invertir el orden: primero haces algo pequeño y después, poco a poco, aparece el ánimo. La clave es que sea tan pequeño que sea difícil decir que no: salir cinco minutos a caminar, escribirle a una persona, ducharte con tu música favorita.',
+      'Anota cada día una actividad que te dé gusto y una que te haga sentir capaz. Al final de la semana revisa cómo te sentiste. Si el ánimo bajo dura más de dos semanas o afecta tu trabajo o tus relaciones, busca apoyo profesional.'] },
+  { id: 'c5', tema: 'Duelo', tipo: 'Artículo', min: 4, title: 'El duelo no es una línea recta',
+    desc: 'Sobre los días buenos, los días malos y lo que nadie te dice de perder a alguien.',
+    body: ['Se habla de etapas del duelo como si fueran escalones, pero en la vida real se parece más a la marea: hay días en los que todo parece estar en calma y otros en los que el dolor vuelve con fuerza por una canción, una fecha o un olor.',
+      'No hay un tiempo correcto para estar bien. Lo que ayuda es darte permiso de sentir, mantener rutinas básicas como comer y dormir, y hablar de la persona que perdiste con quienes también la quieren.',
+      'Si después de varios meses el dolor no te deja funcionar, si sientes culpa constante o pierdes el interés por todo, un profesional en duelo puede acompañarte.'] },
+  { id: 'c6', tema: 'Relaciones', tipo: 'Guía', min: 3, title: 'Cómo pedirle apoyo a alguien cercano',
+    desc: 'Frases simples para abrir una conversación que cuesta empezar.',
+    body: ['Pedir ayuda no es una carga para los demás; muchas veces las personas que te quieren están esperando una señal para acercarse. Ayuda elegir a una persona, un momento tranquilo y ser concreto con lo que necesitas.',
+      'Puedes empezar con algo como: "Últimamente no me he sentido bien y quería contártelo", o "No necesito que me des soluciones, solo que me escuches un rato". También vale decir lo práctico: "¿Me acompañas a la cita?" o "¿Me escribes el jueves para ver cómo voy?".',
+      'Si la conversación no sale como esperabas, no significa que no merezcas apoyo. Prueba con otra persona o con una línea de escucha.'] },
+  { id: 'c7', tema: 'Autoestima', tipo: 'Ejercicio', min: 4, title: 'Háblate como le hablarías a un amigo',
+    desc: 'Un ejercicio para bajarle el volumen a la voz crítica interna.',
+    body: ['Todos tenemos una voz interna que comenta lo que hacemos. Cuando se vuelve muy dura, repite frases como "siempre lo arruinas" o "no sirves para esto" que no le diríamos a nadie más.',
+      'El ejercicio: la próxima vez que notes esa voz, escribe la frase exacta. Luego imagina que un amigo te cuenta que se dice eso a sí mismo. ¿Qué le responderías? Escribe esa respuesta debajo.',
+      'Repítelo durante una semana. No se trata de pensar en positivo a la fuerza, sino de mirarte con la misma justicia con la que miras a otros.'] },
+  { id: 'c8', tema: 'Ansiedad', tipo: 'Ejercicio', min: 2, tool: 'aterrizar', title: 'Técnica 5-4-3-2-1 para volver al presente',
+    desc: 'Usa tus sentidos para salir del bucle de pensamientos. Se hace en dos minutos.',
+    body: ['Nombra cinco cosas que puedes ver, cuatro que puedes tocar, tres que puedes oír, dos que puedes oler y una que puedes saborear. Hazlo despacio.'] }
+];
+
+const EPISODES = [
+  { id: 'e1', tema: 'Ansiedad', min: 3, title: 'Respira antes de responder',
+    desc: 'Un ejercicio guiado para los momentos en que todo pasa demasiado rápido.',
+    script: 'Hola, bienvenido a Minisalvavidas. Este es un espacio corto para ti. Si puedes, busca una posición cómoda. No tienes que cerrar los ojos si no quieres. Vamos a respirar juntos. Inhala por la nariz contando hasta cuatro. Uno, dos, tres, cuatro. Sostén el aire un momento. Ahora suéltalo despacio por la boca, como si apagaras una vela de lejos. Muy bien. Una vez más. Inhala. Sostén. Y suelta. Fíjate en tus hombros. Si están cerca de las orejas, déjalos caer. Cuando sientas que la ansiedad sube, recuerda esto: la sensación llega, crece y también baja. No tienes que resolverlo todo ahora. Solo el siguiente respiro. Gracias por regalarte estos minutos.' },
+  { id: 'e2', tema: 'Sueño', min: 3, title: 'Cuando la cabeza no se apaga de noche',
+    desc: 'Qué hacer con los pensamientos que aparecen justo al apagar la luz.',
+    script: 'Es de noche y tu cabeza decidió que este es el momento perfecto para repasar todo lo pendiente. Le pasa a mucha gente. Primero, no pelees con los pensamientos. Pelear con ellos los hace más fuertes. Imagina que son carros pasando por una avenida. Los ves, pero no te subes a ninguno. Si hay algo que no puedes soltar, enciende una luz suave y escríbelo en un papel. Al lado escribe qué harás mañana con eso. Ya está guardado, ya no tienes que cargarlo. Ahora lleva tu atención a los pies. Siente su peso. Luego las piernas, la espalda, los brazos. Deja que el colchón te sostenga. Si pasan veinte minutos y sigues despierto, levántate un rato y vuelve cuando tengas sueño. Mañana es otro día.' },
+  { id: 'e3', tema: 'Relaciones', min: 3, title: 'Pedir ayuda no es rendirse',
+    desc: 'Por qué nos cuesta tanto decir que no estamos bien, y cómo empezar.',
+    script: 'Muchos crecimos escuchando que hay que aguantar, que los problemas se resuelven solos o que contar lo que sentimos es de débiles. Hoy queremos decirte algo distinto. Pedir ayuda es una decisión valiente. Es como pedir un salvavidas cuando el agua está muy movida. No significa que no sepas nadar, significa que quieres llegar a la orilla. Piensa en una persona con la que te sientas seguro. No tiene que ser la más cercana, solo alguien que escuche sin juzgar. Puedes empezar con una frase sencilla: no he estado bien y quería contártelo. Y si sientes que no tienes a nadie, existen profesionales y líneas gratuitas que escuchan las veinticuatro horas. Tú también mereces apoyo.' },
+  { id: 'e4', tema: 'Estrés laboral', min: 3, title: 'El domingo en la noche también se puede',
+    desc: 'Para la ansiedad de inicio de semana y la sensación de no alcanzar.',
+    script: 'Es domingo en la tarde y ya sientes el peso de la semana. Esa sensación tiene nombre: la ansiedad anticipatoria. Tu mente está viviendo el lunes antes de que llegue. Hagamos algo práctico. Escribe tres cosas que de verdad tienen que pasar esta semana. Solo tres. Lo demás puede esperar o puede delegarse. Ahora piensa en un momento pequeño que te dé gusto entre semana. Un café con alguien, una caminata, un capítulo de tu serie. Agéndalo como si fuera una reunión importante, porque lo es. Y recuerda que tu valor no depende de cuántos pendientes tachas. Eres una persona, no una lista de tareas.' },
+  { id: 'e5', tema: 'Duelo', min: 3, title: 'No hay un tiempo correcto para estar bien',
+    desc: 'Una conversación honesta sobre el duelo y sus días difíciles.',
+    script: 'Si estás atravesando una pérdida, este episodio es para ti. El duelo no sigue un calendario. Hay días en los que te sientes en calma y otros en los que una canción te devuelve todo de golpe. Las dos cosas son normales. No tienes que ser fuerte todo el tiempo. Llorar, reír con un recuerdo o sentir rabia son formas de querer a quien ya no está. Cuida lo básico: come algo, duerme lo que puedas, sal un rato al aire libre. Y habla de esa persona con quien también la quiso. Si el dolor no te deja vivir tu día a día, buscar acompañamiento profesional es una forma de honrar ese amor.' }
+];
+
+const SPECIALISTS = [
+  { id: 's1', name: 'Laura Méndez', role: 'Psicóloga clínica', focus: 'Ansiedad y ataques de pánico', approach: 'Terapia cognitivo-conductual', modes: ['Virtual', 'Presencial'], city: 'Bogotá', years: 9, color: '#38C9C1' },
+  { id: 's2', name: 'Andrés Rincón', role: 'Psiquiatra', focus: 'Depresión y trastornos del sueño', approach: 'Evaluación médica y tratamiento', modes: ['Virtual', 'Presencial'], city: 'Bogotá', years: 12, color: '#A99BFF' },
+  { id: 's3', name: 'Camila Ortega', role: 'Psicóloga', focus: 'Jóvenes y adultos jóvenes', approach: 'Terapia de aceptación y compromiso', modes: ['Virtual'], city: 'Medellín', years: 6, color: '#FFC94D' },
+  { id: 's4', name: 'Julián Pardo', role: 'Psicólogo', focus: 'Duelo y pérdidas', approach: 'Acompañamiento en duelo', modes: ['Presencial', 'Virtual'], city: 'Cali', years: 11, color: '#9ED8F2' },
+  { id: 's5', name: 'Natalia Gómez', role: 'Terapeuta de pareja y familia', focus: 'Relaciones y comunicación', approach: 'Terapia sistémica', modes: ['Virtual'], city: 'Barranquilla', years: 8, color: '#FFB3C1' },
+  { id: 's6', name: 'Sergio Lozano', role: 'Psicólogo', focus: 'Estrés laboral y agotamiento', approach: 'Intervención breve centrada en soluciones', modes: ['Virtual', 'Presencial'], city: 'Bogotá', years: 7, color: '#FF8A3D' }
+];
+const SLOTS = ['8:00', '9:00', '10:30', '12:00', '14:00', '15:30', '17:00', '18:30'];
+
+/* =========================================================
+   Router
+   ========================================================= */
+const VIEWS = ['inicio', 'checkin', 'resultado', 'biblioteca', 'podcasts', 'especialistas', 'miespacio'];
+const ON = {
+  inicio: renderHome,
+  checkin: () => { if (!F || pendingMood !== undefined) { startFlow(pendingMood); pendingMood = undefined; } else renderStep(); },
+  resultado: renderResult,
+  biblioteca: renderLibrary,
+  podcasts: renderPodcasts,
+  especialistas: renderSpecialists,
+  miespacio: renderMe
+};
+function route() {
+  let v = (location.hash || '#inicio').slice(1);
+  if (!VIEWS.includes(v)) v = 'inicio';
+  $$('dialog[open]').forEach(d => d.close());
+  $$('[data-view]').forEach(s => { s.hidden = s.dataset.view !== v; });
+  const navKey = v === 'resultado' ? 'checkin' : v;
+  $$('[data-nav]').forEach(a => a.dataset.nav === navKey ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  window.scrollTo(0, 0);
+  ON[v] && ON[v]();
+}
+window.addEventListener('hashchange', route);
+function go(v) { if (location.hash === '#' + v) route(); else location.hash = v; }
+
+/* =========================================================
+   Inicio
+   ========================================================= */
+function renderHome() {
+  $('#heroMoods').innerHTML = MOODS.map(m => `<button data-mood="${m.v}"><span aria-hidden="true">${m.e}</span>${m.t}</button>`).join('');
+  $('#homeContent').innerHTML = CONTENT.slice(0, 3).map((c, i) => cardHTML(c, i === 0)).join('');
+  $('#homeEps').innerHTML = EPISODES.slice(0, 2).map(epHTML).join('');
+  syncPlayer();
+}
+let pendingMood;
+document.addEventListener('click', e => {
+  const m = e.target.closest('[data-mood]');
+  if (m) { pendingMood = +m.dataset.mood; go('checkin'); }
+});
+
+/* =========================================================
+   Check-in
+   ========================================================= */
+let F = null;
+function startFlow(mood) {
+  const prof = store.get('profile', null);
+  F = { mode: null, name: prof?.name || '', contact: prof?.contact || '', mood: mood ?? null, presetMood: mood != null, text: '', saveText: false, a: {}, support: null, pref: null, crisis: false, i: 0 };
+  F.steps = buildSteps();
+  renderStep();
+}
+function buildSteps() {
+  const s = ['modo'];
+  if (F.mode === 'nombre') s.push('datos');
+  if (!F.presetMood) s.push('animo');
+  s.push('texto');
+  GAD.forEach((_, i) => s.push('g' + i));
+  PHQ.forEach((_, i) => s.push('p' + i));
+  s.push('apoyo', 'pref');
+  return s;
+}
+function say(q, ctx) {
+  return `<div class="bot"><svg class="bot-av" aria-hidden="true"><use href="#buoy"/></svg><div><div class="who">Mini</div>${ctx ? `<p class="ctx">${ctx}</p>` : ''}<h2 class="q" tabindex="-1">${q}</h2></div></div>`;
+}
+function freqOpts(id) {
+  return `<div class="opts">${FREQ.map((f, v) => `<button class="opt" data-ans="${v}"${F.a[id] === v ? ' aria-pressed="true" style="box-shadow:inset 0 0 0 2px var(--pool)"' : ''}><span class="k">${v + 1}</span>${f}<span class="dots" aria-hidden="true">${[0, 1, 2].map(d => `<i class="${d < v ? 'on' : ''}"></i>`).join('')}</span></button>`).join('')}</div><span class="kbd-hint">Puedes responder con las teclas 1 a 4.</span>`;
+}
+function renderStep() {
+  if (!F) return startFlow();
+  const id = F.steps[F.i];
+  const total = F.steps.length;
+  $('#flowBar').style.width = Math.round(F.i / total * 100) + '%';
+  $('.flow-top .bar').setAttribute('aria-valuenow', Math.round(F.i / total * 100));
+  $('#flowCount').textContent = `${F.i + 1} de ${total}`;
+  $('#flowBack').disabled = F.i === 0;
+  let h = '';
+  if (id === 'modo') {
+    h = say('Hola, soy Mini. Antes de empezar, ¿cómo quieres entrar?', 'Puedes cambiarlo la próxima vez.') +
+      `<div class="opts big">
+        <button class="opt" data-ans="anonimo">${icon('i-mask')}<strong>Entrar en anónimo</strong><span>No te pedimos nombre ni contacto. Tus respuestas se quedan en este dispositivo.</span></button>
+        <button class="opt" data-ans="nombre">${icon('i-user')}<strong>Entrar con mi nombre</strong><span>Guardamos tu historial y agendas más rápido con un especialista.</span></button>
+      </div>`;
+  } else if (id === 'datos') {
+    h = say('¡Qué bueno tenerte aquí! ¿Cómo te llamas?') +
+      `<form id="fData" novalidate>
+        <div class="field"><label for="dName">Nombre o como te gusta que te digan</label><input class="input" id="dName" required maxlength="60" value="${esc(F.name)}" autocomplete="given-name"></div>
+        <div class="field"><label for="dContact">Celular o correo</label><input class="input" id="dContact" maxlength="80" value="${esc(F.contact)}" placeholder="Opcional, para confirmarte citas"></div>
+        <label class="check"><input type="checkbox" id="dConsent" required> <span>Autorizo el tratamiento de mis datos personales y de salud para recibir orientación y agendar citas, conforme a la Ley 1581 de 2012. Puedo borrarlos cuando quiera desde Mi espacio.</span></label>
+        <div class="flow-actions"><button class="btn" type="submit">Continuar</button></div>
+      </form>`;
+  } else if (id === 'animo') {
+    h = say((F.name ? esc(F.name) + ', ¿' : '¿') + 'cómo te sientes hoy?') +
+      `<div class="opts moods">${MOODS.map(m => `<button class="opt" data-ans="${m.v}"><span aria-hidden="true">${m.e}</span>${m.t}</button>`).join('')}</div>`;
+  } else if (id === 'texto') {
+    const hi = F.name ? esc(F.name) + ', cuéntame' : 'Cuéntame';
+    h = say(`${hi} qué está pasando.`, 'Escribe lo que quieras, como te salga. Nadie te va a juzgar.') +
+      `<form id="fText">
+        <div class="field"><label class="sr" for="tText">Lo que está pasando</label><textarea class="input" id="tText" placeholder="Últimamente me he sentido…">${esc(F.text)}</textarea></div>
+        ${F.mode === 'nombre' ? `<label class="check"><input type="checkbox" id="tSave"${F.saveText ? ' checked' : ''}> <span>Guardar este texto en mi diario.</span></label>` : ''}
+        <div class="flow-actions"><button class="btn" type="submit">Continuar</button><button class="btn ghost" type="button" id="tSkip">Prefiero no escribir</button></div>
+      </form>`;
+  } else if (/^g\d$/.test(id)) {
+    const n = +id.slice(1);
+    h = say(GAD[n], n === 0 ? 'Ahora unas preguntas sobre las últimas dos semanas. Responde con lo primero que sientas.' : 'En las últimas dos semanas') + freqOpts(id);
+  } else if (/^p\d$/.test(id)) {
+    const n = +id.slice(1);
+    const ctx = n === 8 ? 'Esta pregunta es importante y la hacemos a todas las personas. Responde con honestidad: está bien no estar bien.' : 'En las últimas dos semanas';
+    h = say(PHQ[n], ctx) + freqOpts(id);
+  } else if (id === 'apoyo') {
+    h = say('¿Tienes a alguien de confianza con quien puedas hablar de esto?') +
+      `<div class="opts">${['Sí, tengo a alguien', 'A veces, depende', 'No, siento que no tengo a nadie'].map((t, v) => `<button class="opt" data-ans="${v}"><span class="k">${v + 1}</span>${t}</button>`).join('')}</div>`;
+  } else if (id === 'pref') {
+    h = say('Última pregunta. ¿Qué te ayudaría más ahora mismo?') +
+      `<div class="opts">${['Herramientas rápidas para sentirme mejor', 'Leer o escuchar contenido sobre lo que me pasa', 'Hablar con un especialista'].map((t, v) => `<button class="opt" data-ans="${v}"><span class="k">${v + 1}</span>${t}</button>`).join('')}</div>`;
+  }
+  $('#flow').innerHTML = `<div class="card-flow">${h}</div>`;
+  $('#flow .q')?.focus({ preventScroll: true });
+
+  const fd = $('#fData');
+  if (fd) fd.addEventListener('submit', ev => {
+    ev.preventDefault();
+    const name = $('#dName').value.trim();
+    if (!name) { $('#dName').focus(); return toast('Escribe tu nombre para continuar.'); }
+    if (!$('#dConsent').checked) return toast('Para entrar con tu nombre necesitamos tu autorización de datos.');
+    F.name = name; F.contact = $('#dContact').value.trim();
+    store.set('profile', { mode: 'nombre', name: F.name, contact: F.contact, consent: new Date().toISOString() });
+    next();
+  });
+  const ft = $('#fText');
+  if (ft) {
+    ft.addEventListener('submit', ev => {
+      ev.preventDefault();
+      F.text = $('#tText').value.trim();
+      F.saveText = !!$('#tSave')?.checked;
+      if (F.text && isCrisis(F.text)) { F.crisis = true; openHelp(next, 'Lo que escribiste nos importa. Si estás pensando en hacerte daño, por favor habla hoy con alguien. Estas líneas son gratuitas y atienden las 24 horas.'); }
+      else next();
+    });
+    $('#tSkip').addEventListener('click', () => { F.text = ''; next(); });
+  }
+}
+function answer(val) {
+  const id = F.steps[F.i];
+  if (id === 'modo') {
+    F.mode = val;
+    if (val === 'anonimo') store.set('profile', { mode: 'anonimo' });
+    F.steps = buildSteps();
+    return next();
+  }
+  if (id === 'animo') { F.mood = +val; return next(); }
+  if (id === 'apoyo') { F.support = +val; return next(); }
+  if (id === 'pref') { F.pref = +val; return next(); }
+  F.a[id] = +val;
+  if (id === 'p8' && +val > 0) { F.crisis = true; return openHelp(next, 'Gracias por contarlo. Pensar en hacerte daño es una señal de que mereces apoyo ahora, no después. Estas líneas son gratuitas y atienden las 24 horas.'); }
+  next();
+}
+function next() { F.i++; if (F.i >= F.steps.length) finish(); else renderStep(); }
+$('#flow').addEventListener('click', e => { const b = e.target.closest('[data-ans]'); if (b && F) answer(b.dataset.ans); });
+$('#flowBack').addEventListener('click', () => { if (F && F.i > 0) { F.i--; renderStep(); } });
+$('#flowRestart').addEventListener('click', () => { pendingMood = undefined; startFlow(); });
+document.addEventListener('keydown', e => {
+  if ($('[data-view="checkin"]').hidden || !F || document.querySelector('dialog[open]')) return;
+  if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName)) return;
+  const n = parseInt(e.key, 10);
+  if (n >= 1 && n <= 9) { const btns = $$('#flow [data-ans]'); if (btns[n - 1]) { e.preventDefault(); btns[n - 1].click(); } }
+});
+
+function scoreLevel(phq, gad, crisis) {
+  const lp = phq < 5 ? 0 : phq < 10 ? 1 : phq < 15 ? 2 : 3;
+  const lg = gad < 5 ? 0 : gad < 10 ? 1 : gad < 15 ? 2 : 3;
+  let level = Math.max(lp, lg);
+  if (crisis) level = Math.max(level, 2);
+  return level;
+}
+function finish() {
+  const phq = PHQ.reduce((s, _, i) => s + (F.a['p' + i] || 0), 0);
+  const gad = GAD.reduce((s, _, i) => s + (F.a['g' + i] || 0), 0);
+  const rec = { id: uid(), date: new Date().toISOString(), mode: F.mode, name: F.mode === 'nombre' ? F.name : '', phq, gad,
+    level: scoreLevel(phq, gad, F.crisis), crisis: F.crisis, mood: F.mood, support: F.support, pref: F.pref, sleep: F.a.p2 || 0 };
+  const h = store.get('history', []); h.push(rec); store.set('history', h); store.set('last', rec);
+  if (F.saveText && F.text) { const d = store.get('diario', []); d.unshift({ id: uid(), date: rec.date, mood: F.mood, text: F.text }); store.set('diario', d); }
+  F = null;
+  go('resultado');
+}
+
+/* =========================================================
+   Resultado
+   ========================================================= */
+function bandLabel(score, max) {
+  const r = max === 27 ? [5, 10, 15, 20] : [5, 10, 15, 99];
+  const names = ['Mínimas', 'Leves', 'Moderadas', max === 27 ? 'Moderadamente altas' : 'Altas', 'Altas'];
+  let i = 0; while (i < r.length && score >= r[i]) i++;
+  return names[i];
+}
+function renderResult() {
+  const r = store.get('last', null);
+  const box = $('#result');
+  if (!r) {
+    box.innerHTML = `<div class="empty"><h2 style="font-size:1.6rem">Aún no tienes resultados</h2><p style="margin-top:8px">Haz tu primer check-in y aquí verás tu ruta.</p><a class="btn" href="#checkin">Hacer check-in</a></div>`;
+    return;
+  }
+  const L = LEVELS[r.level];
+  const hi = r.name ? esc(r.name) + ', ' : '';
+  const focusTema = r.gad >= r.phq ? 'Ansiedad' : 'Ánimo';
+  const recs = [];
+  if (r.level >= 2 || r.pref === 2) recs.push({ cls: 'priority', ico: 'i-cal', bg: '#fff', title: r.level >= 3 ? 'Agenda una cita pronto' : 'Habla con un especialista', text: r.level >= 2 ? 'Tus respuestas indican que te hará bien hablar con un profesional. Te mostramos primero los horarios más cercanos.' : 'Elegiste hablar con alguien. Te mostramos especialistas y horarios disponibles.', act: 'go:especialistas' });
+  recs.push({ ico: 'i-wind', bg: '#38C9C1', title: 'Respiración cuadrada', text: 'Cuatro tiempos para bajar las revoluciones en dos minutos.', act: 'tool:respirar' });
+  if (r.gad >= 5) recs.push({ ico: 'i-pin', bg: '#A99BFF', title: 'Volver al presente', text: 'La técnica 5-4-3-2-1 te ayuda cuando la preocupación no para.', act: 'tool:aterrizar' });
+  if (r.sleep >= 2) recs.push({ ico: 'i-book', bg: '#A99BFF', title: 'Siete cambios para dormir mejor', text: 'Tu sueño está afectado. Empieza por uno o dos ajustes.', act: 'read:c2' });
+  recs.push({ ico: 'i-book', bg: TEMAS[focusTema], title: focusTema === 'Ansiedad' ? 'Qué hacer en un pico de ansiedad' : 'Moverte antes de tener ganas', text: 'Una guía corta según lo que más apareció en tus respuestas.', act: 'read:' + (focusTema === 'Ansiedad' ? 'c1' : 'c4') });
+  recs.push({ ico: 'i-mic', bg: '#FFC94D', title: 'Escucha un episodio', text: r.support === 2 ? 'Pedir ayuda no es rendirse: un episodio para dar el primer paso.' : 'Episodios de tres minutos para cuando la cabeza va muy rápido.', act: 'play:' + (r.support === 2 ? 'e3' : focusTema === 'Ansiedad' ? 'e1' : 'e4') });
+  if (r.level < 2 && r.pref !== 2) recs.push({ ico: 'i-cal', bg: '#FFB3C1', title: 'Si lo necesitas, hay especialistas', text: 'Puedes agendar cuando quieras, sin esperar a sentirte peor.', act: 'go:especialistas' });
+
+  box.innerHTML = `
+    <div class="result-hero">
+      <div class="water" style="--h:0%"></div>
+      <div class="inner">
+        <span class="lvl" style="background:${L.color}">${icon('i-life', 16)} Tu resultado de hoy</span>
+        <h1>${hi}${L.name.toLowerCase().replace(/^./, c => hi ? c : c.toUpperCase())}</h1>
+        <p>${L.text}</p>
+      </div>
+    </div>
+    ${r.crisis ? `<div class="alert">${icon('i-alert')}<div><h3>Queremos que hables con alguien hoy</h3><p>Mencionaste pensamientos de hacerte daño. Llama a la Línea 106 (Bogotá), a la Línea 192 opción 4 (nacional) o al 123 si hay un riesgo inmediato. Son gratuitas y atienden las 24 horas.</p><div class="flow-actions"><button class="btn buoy sm" data-help>Ver líneas de ayuda</button><a class="btn ghost sm" href="#especialistas">Agendar con un especialista</a></div></div></div>` : ''}
+    <div class="meters">
+      ${meterHTML('Señales de ansiedad', r.gad, 21)}
+      ${meterHTML('Señales de ánimo bajo', r.phq, 27)}
+    </div>
+    <div class="section tight" style="padding-left:0;padding-right:0">
+      <div class="head"><div><h2>Tu ruta para hoy</h2><p>Elegimos estas opciones según tus respuestas. Puedes empezar por la que quieras.</p></div></div>
+      <div class="recs">${recs.map(x => `<button class="rec ${x.cls || ''}" data-act="${x.act}"><span class="ico" style="background:${x.bg};color:#0F2A4A">${icon(x.ico)}</span><h3>${x.title}</h3><p>${x.text}</p></button>`).join('')}</div>
+    </div>
+    <div class="flow-actions"><a class="btn" href="#miespacio">Ver mi historial</a><button class="btn ghost" id="redo">Hacer otro check-in</button></div>
+    <p class="disclaimer">Este resultado se basa en versiones adaptadas de los cuestionarios GAD-7 y PHQ-9, usados internacionalmente para detectar señales tempranas. No es un diagnóstico: solo un profesional de la salud puede hacer una valoración completa.</p>`;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $('.result-hero .water').style.setProperty('--h', L.water + '%');
+    $$('.meter .track i').forEach(i => i.style.width = i.dataset.w);
+  }));
+  $('#redo').addEventListener('click', () => { pendingMood = undefined; F = null; go('checkin'); });
+}
+function meterHTML(title, score, max) {
+  const pct = Math.round(score / max * 100);
+  const c = pct < 19 ? '#38C9C1' : pct < 38 ? '#FFC94D' : pct < 56 ? '#FF8A3D' : '#F2435A';
+  return `<div class="meter"><h3>${title}</h3><div class="track"><i data-w="${Math.max(pct, 3)}%" style="background:${c}"></i></div><div class="row"><span>${bandLabel(score, max)}</span><span>${score} de ${max}</span></div></div>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const [k, v] = b.dataset.act.split(':');
+  if (k === 'go') go(v);
+  if (k === 'tool') openTools(v);
+  if (k === 'read') openReader(v);
+  if (k === 'play') { const ep = EPISODES.find(x => x.id === v); if (ep) play(ep); }
+});
+
+/* =========================================================
+   Biblioteca
+   ========================================================= */
+let libFilter = 'Todos';
+function cardHTML(c, feature) {
+  const color = TEMAS[c.tema] || '#38C9C1';
+  return `<button class="card${feature ? ' feature' : ''}" style="--c:${color}" data-read="${c.id}">
+    ${c.mine ? '<span class="mine">Subido por ti</span>' : ''}
+    <span class="tag">${esc(c.tema)}</span>
+    <h3>${esc(c.title)}</h3>
+    <p>${esc(c.desc)}</p>
+    <span class="meta">${esc(c.tipo)}${c.min ? `, ${c.min} min` : ''}${c.author ? `, por ${esc(c.author)}` : ''}</span>
+  </button>`;
+}
+let uploads = [];
+async function loadUploads() { uploads = (await DB.all()).sort((a, b) => b.date.localeCompare(a.date)); }
+async function renderLibrary() {
+  await loadUploads();
+  const mine = uploads.filter(u => u.kind === 'contenido').map(u => ({ ...u, mine: true }));
+  const all = [...mine, ...CONTENT];
+  const temas = ['Todos', ...Object.keys(TEMAS)];
+  $('#libChips').innerHTML = temas.map(t => `<button class="chip" data-tema="${t}" aria-pressed="${t === libFilter}">${t}</button>`).join('');
+  const q = norm($('#libSearch').value);
+  const list = all.filter(c => (libFilter === 'Todos' || c.tema === libFilter) && (!q || norm(c.title + ' ' + c.desc + ' ' + c.tema + ' ' + (c.body ? [].concat(c.body).join(' ') : '')).includes(q)));
+  $('#libGrid').innerHTML = list.length ? list.map((c, i) => cardHTML(c, i === 0 && !q && libFilter === 'Todos')).join('')
+    : `<div class="empty" style="grid-column:1/-1"><p>No encontramos contenidos con ese filtro. Prueba con otro tema o sube el primero.</p><button class="btn" data-upload="contenido">Subir contenido</button></div>`;
+}
+$('#libChips').addEventListener('click', e => { const c = e.target.closest('[data-tema]'); if (c) { libFilter = c.dataset.tema; renderLibrary(); } });
+let searchT; $('#libSearch').addEventListener('input', () => { clearTimeout(searchT); searchT = setTimeout(renderLibrary, 180); });
+document.addEventListener('click', e => { const c = e.target.closest('[data-read]'); if (c) openReader(c.dataset.read); });
+
+const objectURLs = [];
+function blobURL(b) { const u = URL.createObjectURL(b); objectURLs.push(u); return u; }
+async function openReader(id) {
+  let c = CONTENT.find(x => x.id === id);
+  if (!c) { await loadUploads(); c = uploads.find(x => x.id === id); }
+  if (!c) return;
+  if (c.tool) return openTools(c.tool);
+  const color = TEMAS[c.tema] || '#38C9C1';
+  const paras = Array.isArray(c.body) ? c.body : String(c.body || '').split(/\n\s*\n/).filter(Boolean);
+  let media = '';
+  if (c.blob) {
+    const u = blobURL(c.blob), t = c.fileType || '';
+    if (t.startsWith('image/')) media = `<img src="${u}" alt="${esc(c.title)}">`;
+    else if (t.startsWith('video/')) media = `<video src="${u}" controls playsinline></video>`;
+    else if (t.startsWith('audio/')) media = `<audio src="${u}" controls></audio>`;
+    else if (t === 'application/pdf') media = `<iframe src="${u}" title="${esc(c.title)}"></iframe>`;
+    else media = `<a class="btn ghost sm" href="${u}" download="${esc(c.fileName || 'archivo')}">Descargar archivo</a>`;
+  }
+  const link = c.url && /^https?:\/\//i.test(c.url) ? `<p><a class="btn ghost sm" href="${esc(c.url)}" target="_blank" rel="noopener">Abrir enlace</a></p>` : '';
+  $('#readerBody').innerHTML = `<span class="tag" style="background:${color}">${esc(c.tema)}</span><h2 id="readerTitle">${esc(c.title)}</h2>
+    <p class="muted tiny" style="margin-bottom:16px">${esc(c.tipo || '')}${c.min ? `, ${c.min} min de lectura` : ''}${c.author ? `, por ${esc(c.author)}` : ''}</p>
+    ${media}${paras.map(p => `<p>${esc(p)}</p>`).join('')}${link}
+    ${c.mine ? `<div class="flow-actions"><button class="btn ghost sm" data-del="${c.id}">${icon('i-trash', 16)} Eliminar</button></div>` : ''}`;
+  $('#dlgReader').showModal();
+}
+
+/* Subidas */
+document.addEventListener('click', e => { const u = e.target.closest('[data-upload]'); if (u) openUpload(u.dataset.upload); });
+function openUpload(kind) {
+  const f = $('#upForm'); f.reset();
+  $('#upKind').value = kind;
+  const pod = kind === 'podcast';
+  $('#upTitle').textContent = pod ? 'Subir episodio de podcast' : 'Subir contenido';
+  $('#upTypeField').hidden = pod;
+  $('#upBodyField').hidden = pod;
+  $('#upTema').innerHTML = Object.keys(TEMAS).map(t => `<option>${t}</option>`).join('');
+  $('#upFile').accept = pod ? 'audio/*' : 'image/*,video/*,audio/*,application/pdf';
+  $('#upFileHelp').textContent = pod ? 'Archivo de audio (MP3, M4A, WAV) de hasta 60 MB, o deja un enlace.' : 'Imagen, video, audio o PDF de hasta 60 MB.';
+  $('#dlgUpload').showModal();
+}
+$('#upForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const kind = $('#upKind').value, title = $('#upName').value.trim();
+  if (!title) { $('#upName').focus(); return toast('Ponle un título.'); }
+  const file = $('#upFile').files[0];
+  if (file && file.size > 60 * 1024 * 1024) return toast('El archivo supera los 60 MB.');
+  const url = $('#upUrl').value.trim();
+  if (url && !/^https?:\/\//i.test(url)) return toast('El enlace debe empezar por https://');
+  if (kind === 'podcast' && !file && !url) return toast('Sube un audio o pega un enlace.');
+  const item = { id: 'u' + uid(), kind, title, tema: $('#upTema').value, tipo: kind === 'podcast' ? 'Episodio' : $('#upType').value,
+    author: $('#upAuthor').value.trim(), desc: $('#upDesc').value.trim(), body: kind === 'podcast' ? '' : $('#upBody').value.trim(),
+    url, date: new Date().toISOString() };
+  if (file) { item.blob = file; item.fileName = file.name; item.fileType = file.type; }
+  try { await DB.put(item); } catch (err) { return toast('Este navegador no permite guardar archivos. Prueba sin modo incógnito.'); }
+  $('#dlgUpload').close();
+  toast(kind === 'podcast' ? 'Episodio guardado.' : 'Contenido guardado.');
+  if (kind === 'podcast') renderPodcasts(); else renderLibrary();
+});
+document.addEventListener('click', async e => {
+  const d = e.target.closest('[data-del]'); if (!d) return;
+  if (!confirm('¿Eliminar este elemento de tu dispositivo?')) return;
+  await DB.del(d.dataset.del);
+  $$('dialog[open]').forEach(x => x.close());
+  toast('Eliminado.');
+  route();
+});
+
+/* =========================================================
+   Podcasts y reproductor
+   ========================================================= */
+function epHTML(ep) {
+  const playing = PL.ep && PL.ep.id === ep.id && PL.playing;
+  return `<div class="ep${PL.ep && PL.ep.id === ep.id ? ' playing' : ''}">
+    <button class="play" data-play="${ep.id}" aria-label="${playing ? 'Pausar' : 'Escuchar'} ${esc(ep.title)}">${icon(playing ? 'i-pause' : 'i-play')}</button>
+    <div><h3>${esc(ep.title)}</h3><p>${esc(ep.desc || '')}</p></div>
+    <div class="side"><span>${ep.min ? ep.min + ' min' : esc(ep.tema)}</span>${ep.mine ? `<button class="linkbtn" data-del="${ep.id}">Eliminar</button>` : `<span>${esc(ep.tema)}</span>`}</div>
+  </div>`;
+}
+async function renderPodcasts() {
+  await loadUploads();
+  $('#eps').innerHTML = EPISODES.map(epHTML).join('');
+  const mine = uploads.filter(u => u.kind === 'podcast').map(u => ({ ...u, mine: true }));
+  $('#myEps').innerHTML = mine.length ? mine.map(epHTML).join('')
+    : `<div class="empty"><p>Todavía no hay episodios subidos. Carga entrevistas con especialistas, cápsulas de LOS40 o testimonios.</p><button class="btn" data-upload="podcast">Subir episodio</button></div>`;
+}
+$('#playFirst').addEventListener('click', () => play(EPISODES[0]));
+
+const PL = { ep: null, audio: new Audio(), chunks: [], idx: 0, tts: false, playing: false, rate: 1, tok: 0, url: null };
+function findEp(id) { return EPISODES.find(e => e.id === id) || uploads.map(u => ({ ...u, mine: true })).find(u => u.id === id); }
+document.addEventListener('click', e => {
+  const p = e.target.closest('[data-play]'); if (!p) return;
+  const ep = findEp(p.dataset.play); if (!ep) return;
+  if (PL.ep && PL.ep.id === ep.id) togglePlay(); else play(ep);
+});
+function pickVoice() {
+  const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  return vs.find(v => /es[-_](CO|419|MX|US)/i.test(v.lang)) || vs.find(v => /^es/i.test(v.lang)) || null;
+}
+function play(ep) {
+  stopPlayer(true);
+  PL.ep = ep;
+  $('#player').hidden = false; document.body.classList.add('has-player');
+  $('#plTitle').textContent = ep.title;
+  $('#plSub').textContent = ep.author ? ep.author : (ep.script ? 'Serie Minisalvavidas, narrado por voz' : 'Episodio subido');
+  if (ep.blob || ep.url) {
+    PL.tts = false;
+    if (PL.url) URL.revokeObjectURL(PL.url);
+    PL.url = ep.blob ? URL.createObjectURL(ep.blob) : null;
+    PL.audio.src = PL.url || ep.url;
+    PL.audio.playbackRate = PL.rate;
+    PL.playing = true;
+    PL.audio.play().catch(() => { PL.playing = false; syncPlayer(); toast('No se pudo reproducir. Si es un enlace de una plataforma, ábrelo desde la plataforma.'); });
+  } else {
+    if (!('speechSynthesis' in window)) { toast('Tu navegador no permite la narración por voz.'); return; }
+    PL.tts = true;
+    PL.chunks = (ep.script.match(/[^.!?]+[.!?]*/g) || [ep.script]).map(s => s.trim()).filter(Boolean);
+    PL.idx = 0; PL.playing = true; speakNext();
+  }
+  syncPlayer();
+}
+function speakNext() {
+  if (!PL.tts || !PL.playing) return;
+  if (PL.idx >= PL.chunks.length) { PL.playing = false; PL.idx = 0; syncPlayer(); return; }
+  const tok = ++PL.tok;
+  const u = new SpeechSynthesisUtterance(PL.chunks[PL.idx]);
+  u.lang = 'es-CO'; const v = pickVoice(); if (v) u.voice = v; u.rate = PL.rate;
+  u.onend = () => { if (tok !== PL.tok || !PL.playing) return; PL.idx++; syncPlayer(); speakNext(); };
+  u.onerror = () => { if (tok !== PL.tok) return; PL.playing = false; syncPlayer(); };
+  speechSynthesis.speak(u);
+}
+function togglePlay() {
+  if (!PL.ep) return;
+  if (PL.tts) {
+    if (PL.playing) { PL.playing = false; PL.tok++; speechSynthesis.cancel(); }
+    else { PL.playing = true; speakNext(); }
+  } else {
+    if (PL.audio.paused) { PL.audio.play().catch(() => {}); PL.playing = true; } else { PL.audio.pause(); PL.playing = false; }
+  }
+  syncPlayer();
+}
+function stopPlayer(keepBar) {
+  PL.tok++; PL.playing = false;
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  PL.audio.pause();
+  if (!keepBar) { PL.ep = null; $('#player').hidden = true; document.body.classList.remove('has-player'); }
+  syncPlayer();
+}
+function syncPlayer() {
+  $('#plToggle').innerHTML = icon(PL.playing ? 'i-pause' : 'i-play');
+  $('#plToggle').setAttribute('aria-label', PL.playing ? 'Pausar' : 'Reproducir');
+  let pct = 0;
+  if (PL.tts && PL.chunks.length) pct = PL.idx / PL.chunks.length * 100;
+  else if (PL.audio.duration) pct = PL.audio.currentTime / PL.audio.duration * 100;
+  $('#plSeek').value = pct;
+  $$('[data-play]').forEach(b => {
+    const on = PL.ep && PL.ep.id === b.dataset.play && PL.playing;
+    b.innerHTML = icon(on ? 'i-pause' : 'i-play');
+    b.closest('.ep')?.classList.toggle('playing', !!(PL.ep && PL.ep.id === b.dataset.play));
+  });
+}
+PL.audio.addEventListener('timeupdate', syncPlayer);
+PL.audio.addEventListener('ended', () => { PL.playing = false; syncPlayer(); });
+$('#plToggle').addEventListener('click', togglePlay);
+$('#plClose').addEventListener('click', () => stopPlayer(false));
+$('#plRate').addEventListener('change', e => { PL.rate = +e.target.value; PL.audio.playbackRate = PL.rate; if (PL.tts && PL.playing) { PL.tok++; speechSynthesis.cancel(); speakNext(); } });
+$('#plSeek').addEventListener('input', e => {
+  const v = +e.target.value / 100;
+  if (PL.tts) { PL.idx = Math.min(PL.chunks.length - 1, Math.floor(v * PL.chunks.length)); if (PL.playing) { PL.tok++; speechSynthesis.cancel(); speakNext(); } }
+  else if (PL.audio.duration) PL.audio.currentTime = v * PL.audio.duration;
+});
+if (window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};
+
+/* =========================================================
+   Especialistas y citas
+   ========================================================= */
+let spFilter = 'Todos';
+function hash(s) { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); }
+function dateKey(d) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+function nextDays(n) {
+  const out = []; const d = new Date(); d.setHours(12, 0, 0, 0);
+  while (out.length < n) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0) out.push(new Date(d)); }
+  return out;
+}
+function slotsFor(spId, key) {
+  const taken = store.get('citas', []).filter(c => c.spId === spId && c.date === key).map(c => c.time);
+  return SLOTS.filter((s, i) => hash(spId + key + i) % 3 !== 0 && !taken.includes(s));
+}
+function firstSlot(sp) { for (const d of nextDays(12)) { const s = slotsFor(sp.id, dateKey(d)); if (s.length) return { d, s: s[0] }; } return null; }
+function renderSpecialists() {
+  const last = store.get('last', null);
+  $('#spBanner').innerHTML = last && last.level >= 2
+    ? `<div class="banner">${icon('i-star', 26)}<p><b>Te recomendamos agendar en los próximos días.</b> Según tu último check-in, hablar con un profesional te puede ayudar mucho. Los perfiles muestran el primer horario libre.</p></div>` : '';
+  $('#spChips').innerHTML = ['Todos', 'Virtual', 'Presencial'].map(t => `<button class="chip" data-mode="${t}" aria-pressed="${t === spFilter}">${t}</button>`).join('');
+  const list = SPECIALISTS.filter(s => spFilter === 'Todos' || s.modes.includes(spFilter));
+  $('#pros').innerHTML = list.map(s => {
+    const f = firstSlot(s);
+    const ini = s.name.split(' ').map(w => w[0]).join('').slice(0, 2);
+    return `<article class="pro">
+      <div class="top"><div class="av" style="background:${s.color}" aria-hidden="true">${ini}</div><div><h3>${s.name}</h3><div class="role">${s.role}</div></div></div>
+      <ul>
+        <li>${icon('i-star')}${s.focus}</li>
+        <li>${icon('i-book')}${s.approach}</li>
+        <li>${icon('i-pin')}${s.city}, ${s.years} años de experiencia</li>
+        <li>${icon('i-cal')}${f ? 'Próximo horario: ' + f.d.toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' }) + ', ' + f.s : 'Sin horarios esta semana'}</li>
+      </ul>
+      <div class="modes">${s.modes.map(m => `<span>${m}</span>`).join('')}</div>
+      <button class="btn" data-book="${s.id}">Agendar cita</button>
+    </article>`;
+  }).join('');
+}
+$('#spChips').addEventListener('click', e => { const c = e.target.closest('[data-mode]'); if (c) { spFilter = c.dataset.mode; renderSpecialists(); } });
+
+let BK = null;
+document.addEventListener('click', e => { const b = e.target.closest('[data-book]'); if (b) openBook(b.dataset.book); });
+function openBook(spId) {
+  const sp = SPECIALISTS.find(s => s.id === spId);
+  const f = firstSlot(sp);
+  BK = { sp, date: f ? dateKey(f.d) : dateKey(nextDays(1)[0]), time: null, modo: sp.modes[0] };
+  renderBook();
+  $('#dlgBook').showModal();
+}
+function renderBook() {
+  const { sp } = BK;
+  const prof = store.get('profile', {}) || {};
+  const last = store.get('last', null);
+  const days = nextDays(12);
+  const slots = slotsFor(sp.id, BK.date);
+  const motivo = last ? `Check-in del ${fmtDate(last.date)}: ${LEVELS[last.level].name.toLowerCase()}.` : '';
+  $('#bookBody').innerHTML = `
+    <button class="icon-btn close" data-close aria-label="Cerrar">${icon('i-x')}</button>
+    <h2 id="bookTitle">Cita con ${sp.name}</h2>
+    <p class="muted" style="margin-bottom:16px">${sp.role}. ${sp.focus}.</p>
+    <div class="field"><label>Modalidad</label><div class="chips" id="bkModes">${sp.modes.map(m => `<button type="button" class="chip" data-m="${m}" aria-pressed="${m === BK.modo}">${m}</button>`).join('')}</div></div>
+    <div class="field"><label>Día</label><div class="dates" id="bkDates">${days.map(d => { const k = dateKey(d); return `<button type="button" class="chip" data-d="${k}" aria-pressed="${k === BK.date}">${d.toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' })}</button>`; }).join('')}</div></div>
+    <div class="field"><label>Hora</label><div class="slots" id="bkSlots">${slots.length ? slots.map(s => `<button type="button" class="chip" data-t="${s}" aria-pressed="${s === BK.time}">${s}</button>`).join('') : '<span class="muted">No hay horarios este día. Prueba otro.</span>'}</div></div>
+    <form id="bkForm" novalidate>
+      <div class="field"><label for="bkName">${prof.mode === 'nombre' ? 'Nombre' : 'Nombre o alias'}</label><input class="input" id="bkName" value="${esc(prof.name || '')}" maxlength="60" required></div>
+      <div class="field"><label for="bkContact">Celular o correo</label><input class="input" id="bkContact" value="${esc(prof.contact || '')}" maxlength="80" required><small>Lo necesitamos para enviarte la confirmación${BK.modo === 'Virtual' ? ' y el enlace de la videollamada' : ''}. Solo lo ve el especialista.</small></div>
+      <div class="field"><label for="bkWhy">¿Qué te gustaría trabajar? (opcional)</label><textarea class="input" id="bkWhy" style="min-height:90px">${esc(motivo)}</textarea></div>
+      <label class="check"><input type="checkbox" id="bkOk" required> <span>Autorizo compartir estos datos con el especialista para gestionar la cita, conforme a la Ley 1581 de 2012.</span></label>
+      <div class="flow-actions"><button class="btn" type="submit">Confirmar cita</button><button class="btn ghost" type="button" data-close>Cancelar</button></div>
+    </form>`;
+  $('#bkModes').onclick = e => { const c = e.target.closest('[data-m]'); if (c) { BK.modo = c.dataset.m; keepForm(); renderBook(); } };
+  $('#bkDates').onclick = e => { const c = e.target.closest('[data-d]'); if (c) { BK.date = c.dataset.d; BK.time = null; keepForm(); renderBook(); } };
+  $('#bkSlots').onclick = e => { const c = e.target.closest('[data-t]'); if (c) { BK.time = c.dataset.t; $$('#bkSlots .chip').forEach(x => x.setAttribute('aria-pressed', x === c)); } };
+  if (BK.form) { $('#bkName').value = BK.form.n; $('#bkContact').value = BK.form.c; $('#bkWhy').value = BK.form.w; $('#bkOk').checked = BK.form.ok; }
+  $('#bkForm').addEventListener('submit', e => {
+    e.preventDefault();
+    if (!BK.time) return toast('Elige una hora.');
+    const n = $('#bkName').value.trim(), c = $('#bkContact').value.trim();
+    if (!n) { $('#bkName').focus(); return toast('Escribe un nombre o alias.'); }
+    if (!c) { $('#bkContact').focus(); return toast('Necesitamos un celular o correo para confirmarte.'); }
+    if (!$('#bkOk').checked) return toast('Necesitamos tu autorización para agendar.');
+    const cita = { id: uid(), spId: sp.id, spName: sp.name, role: sp.role, date: BK.date, time: BK.time, modo: BK.modo, alias: n, contact: c, motivo: $('#bkWhy').value.trim(), created: new Date().toISOString() };
+    const all = store.get('citas', []); all.push(cita); store.set('citas', all);
+    const d = new Date(cita.date + 'T12:00:00');
+    $('#bookBody').innerHTML = `<button class="icon-btn close" data-close aria-label="Cerrar">${icon('i-x')}</button>
+      <div class="success"><svg aria-hidden="true"><use href="#buoy"/></svg><h2>Cita agendada</h2>
+      <p class="muted" style="margin-top:8px">${d.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long' })} a las ${cita.time}, ${cita.modo.toLowerCase()}, con ${sp.name}. Te enviaremos la confirmación a ${esc(c)}.</p>
+      <div class="flow-actions" style="justify-content:center"><button class="btn" data-ics="${cita.id}">Añadir a mi calendario</button><a class="btn ghost" href="#miespacio" data-close>Ver mis citas</a></div></div>`;
+    BK = null;
+    if (!$('[data-view="especialistas"]').hidden) renderSpecialists();
+  });
+}
+function keepForm() { if ($('#bkName')) BK.form = { n: $('#bkName').value, c: $('#bkContact').value, w: $('#bkWhy').value, ok: $('#bkOk').checked }; }
+document.addEventListener('click', e => { const b = e.target.closest('[data-ics]'); if (b) downloadICS(b.dataset.ics); });
+function downloadICS(id) {
+  const c = store.get('citas', []).find(x => x.id === id); if (!c) return;
+  const [hh, mm] = c.time.split(':').map(Number);
+  const ymd = c.date.replace(/-/g, '');
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const txt = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Minisalvavidas//ES', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT',
+    'UID:' + c.id + '@minisalvavidas', 'DTSTAMP:' + stamp,
+    `DTSTART;TZID=America/Bogota:${ymd}T${pad(hh)}${pad(mm)}00`, `DTEND;TZID=America/Bogota:${ymd}T${pad(hh + 1)}${pad(mm)}00`,
+    'SUMMARY:Cita Minisalvavidas con ' + c.spName, 'DESCRIPTION:' + c.role + ' (' + c.modo + ')', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/calendar' })); a.download = 'cita-minisalvavidas.ics'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+/* =========================================================
+   Mi espacio
+   ========================================================= */
+function wellness(r) { return Math.round(100 - ((r.phq / 27 + r.gad / 21) / 2) * 100); }
+function chartSVG(h) {
+  const W = 640, H = 200, P = 28;
+  const pts = h.slice(-12);
+  if (pts.length < 2) return `<p class="muted">Cuando tengas dos check-ins o más, aquí verás cómo cambia tu bienestar en el tiempo.</p>`;
+  const x = i => P + i * (W - 2 * P) / (pts.length - 1);
+  const y = v => H - P - v / 100 * (H - 2 * P);
+  const line = pts.map((r, i) => `${x(i).toFixed(1)},${y(wellness(r)).toFixed(1)}`).join(' ');
+  const area = `${P},${H - P} ${line} ${W - P},${H - P}`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución de tu índice de bienestar">
+    ${[25, 50, 75].map(v => `<line x1="${P}" x2="${W - P}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-dasharray="4 6"/>`).join('')}
+    <polygon points="${area}" fill="var(--pool)" opacity=".18"/>
+    <polyline points="${line}" fill="none" stroke="var(--pool-deep)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    ${pts.map((r, i) => `<circle cx="${x(i)}" cy="${y(wellness(r))}" r="6" fill="${LEVELS[r.level].color}" stroke="var(--paper)" stroke-width="2"><title>${fmtDate(r.date)}: ${wellness(r)} de 100</title></circle>`).join('')}
+    <text x="${P}" y="16" font-size="12" fill="var(--ink-2)">Índice de bienestar (100 es mejor)</text>
+  </svg>`;
+}
+function renderMe() {
+  const prof = store.get('profile', null);
+  const h = store.get('history', []);
+  const citas = store.get('citas', []).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  const diario = store.get('diario', []);
+  $('#meTitle').textContent = prof?.name ? `Hola, ${prof.name}` : 'Mi espacio';
+  const today = dateKey(new Date());
+  $('#me').innerHTML = `
+    <div class="panel chart">
+      <h2>Cómo has estado</h2>
+      <p class="sub">${h.length ? `${h.length} check-in${h.length > 1 ? 's' : ''} en este dispositivo.` : 'Aún no has hecho tu primer check-in.'}</p>
+      ${h.length ? chartSVG(h) : '<a class="btn" href="#checkin">Hacer mi primer check-in</a>'}
+    </div>
+    <div class="panel">
+      <h2>Mi modo</h2>
+      <p class="sub">${prof?.mode === 'nombre' ? `Entraste con tu nombre${prof.contact ? ' y contacto' : ''}.` : prof?.mode === 'anonimo' ? 'Estás en modo anónimo.' : 'Elige un modo en tu próximo check-in.'}</p>
+      <div class="flow-actions" style="margin-top:0"><a class="btn sm" href="#checkin">Nuevo check-in</a><button class="btn ghost sm" id="wipe">${icon('i-trash', 16)} Borrar mis datos</button></div>
+      <p class="tiny muted" style="margin-top:14px">Borrar elimina tu historial, citas, diario y archivos subidos de este navegador.</p>
+    </div>
+    <div class="panel">
+      <h2>Mis check-ins</h2>
+      <div class="list">${h.length ? h.slice().reverse().slice(0, 8).map(r => `<div class="item"><span><span class="dot" style="background:${LEVELS[r.level].color}"></span><b>${LEVELS[r.level].name}</b><br><span class="tiny muted">${fmtDate(r.date)}, bienestar ${wellness(r)} de 100</span></span></div>`).join('') : '<p class="muted">Sin registros todavía.</p>'}</div>
+    </div>
+    <div class="panel">
+      <h2>Mis citas</h2>
+      <div class="list">${citas.length ? citas.map(c => `<div class="item"><span><b>${esc(c.spName)}</b><br><span class="tiny muted">${new Date(c.date + 'T12:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' })}, ${c.time}, ${c.modo}${c.date < today ? ' (pasada)' : ''}</span></span><span class="actions"><button class="btn ghost sm" data-ics="${c.id}">Calendario</button><button class="btn ghost sm" data-cancel="${c.id}">Cancelar</button></span></div>`).join('') : '<p class="muted">No tienes citas agendadas.</p><a class="btn sm" href="#especialistas" style="margin-top:6px">Ver especialistas</a>'}</div>
+    </div>
+    <div class="panel span2">
+      <h2>Mi diario</h2>
+      <p class="sub">Escribir lo que sientes ayuda a ordenarlo. Solo tú lo ves.</p>
+      <form id="jForm">
+        <div class="chips" id="jMood" style="margin-bottom:12px">${MOODS.map(m => `<button type="button" class="chip" data-jm="${m.v}" aria-pressed="false">${m.e} ${m.t}</button>`).join('')}</div>
+        <div class="field"><label class="sr" for="jTxt">Entrada de diario</label><textarea class="input" id="jTxt" placeholder="Hoy me sentí…"></textarea></div>
+        <div class="flow-actions" style="margin-top:0"><button class="btn" type="submit">Guardar entrada</button></div>
+      </form>
+      <div class="list" style="margin-top:18px">${diario.slice(0, 10).map(d => `<div class="item" style="align-items:flex-start"><span style="flex:1;min-width:200px"><span class="tiny muted">${fmtDate(d.date)}${d.mood != null ? ', ' + MOODS[d.mood].e + ' ' + MOODS[d.mood].t : ''}</span><br>${esc(d.text)}</span><button class="btn ghost sm" data-jdel="${d.id}" aria-label="Eliminar entrada">${icon('i-trash', 16)}</button></div>`).join('')}</div>
+    </div>`;
+  let jm = null;
+  $('#jMood').onclick = e => { const c = e.target.closest('[data-jm]'); if (!c) return; jm = +c.dataset.jm; $$('#jMood .chip').forEach(x => x.setAttribute('aria-pressed', x === c)); };
+  $('#jForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const t = $('#jTxt').value.trim(); if (!t) return toast('Escribe algo antes de guardar.');
+    const d = store.get('diario', []); d.unshift({ id: uid(), date: new Date().toISOString(), mood: jm, text: t }); store.set('diario', d);
+    renderMe(); toast('Entrada guardada.');
+    if (isCrisis(t)) openHelp(null, 'Lo que escribiste nos importa. Si estás pensando en hacerte daño, habla hoy con alguien. Estas líneas son gratuitas y atienden las 24 horas.');
+  });
+  $('#wipe').addEventListener('click', async () => {
+    if (!confirm('¿Borrar todo lo que Minisalvavidas guardó en este navegador? No se puede deshacer.')) return;
+    store.clear(); await DB.clear(); stopPlayer(false); F = null; renderMe(); toast('Tus datos se borraron.');
+  });
+}
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-cancel]');
+  if (c) { if (!confirm('¿Cancelar esta cita?')) return; store.set('citas', store.get('citas', []).filter(x => x.id !== c.dataset.cancel)); renderMe(); toast('Cita cancelada.'); }
+  const j = e.target.closest('[data-jdel]');
+  if (j) { store.set('diario', store.get('diario', []).filter(x => x.id !== j.dataset.jdel)); renderMe(); }
+});
+
+/* =========================================================
+   Ayuda ahora y herramientas
+   ========================================================= */
+const HELP_LEAD = $('#helpLead').textContent;
+let helpCb = null;
+function openHelp(cb, lead) {
+  helpCb = cb || null;
+  $('#helpLead').textContent = lead || HELP_LEAD;
+  $('#helpContinue').hidden = !cb;
+  if (!$('#dlgHelp').open) $('#dlgHelp').showModal();
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-help]')) openHelp(); });
+$('#helpContinue').addEventListener('click', () => { const cb = helpCb; helpCb = null; $('#dlgHelp').close(); cb && cb(); });
+$('#dlgHelp').addEventListener('close', () => {
+  /* Si cierra sin elegir, igual avanzamos el flujo para no perder respuestas */
+  if (helpCb) { const cb = helpCb; helpCb = null; cb(); }
+});
+
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-close]');
+  if (c) { const d = c.closest('dialog'); if (d) d.close(); }
+  const t = e.target.closest('[data-tools]'); if (t) openTools(t.dataset.tools);
+});
+$$('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+
+function openTools(tab) { setTab(tab || 'respirar'); $('#dlgTools').showModal(); }
+function setTab(tab) {
+  $$('#dlgTools [data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === tab));
+  $$('#dlgTools [data-pane]').forEach(p => p.hidden = p.dataset.pane !== tab);
+  if (tab !== 'respirar') breathStop();
+  if (tab === 'aterrizar') groundReset();
+}
+$('#dlgTools .tabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b) setTab(b.dataset.tab); });
+$('#dlgTools').addEventListener('close', breathStop);
+
+/* Respiración cuadrada */
+let BR = null;
+const PHASES = [['Inhala', 1], ['Sostén', 1], ['Exhala', .55], ['Sostén', .55]];
+function breathStart() {
+  BR = { ph: 0, t: 4, rounds: 0 };
+  $('#breathBtn').textContent = 'Detener';
+  applyPhase();
+  BR.iv = setInterval(() => {
+    BR.t--;
+    if (BR.t <= 0) { BR.ph = (BR.ph + 1) % 4; if (BR.ph === 0) BR.rounds++; BR.t = 4; applyPhase(); }
+    else $('#breathLab').innerHTML = `${PHASES[BR.ph][0]}<small>${BR.t}</small>`;
+  }, 1000);
+}
+function applyPhase() {
+  const [lab, sc] = PHASES[BR.ph];
+  $('#orb').style.transform = `scale(${sc * 1.6})`;
+  $('#breathLab').innerHTML = `${lab}<small>${BR.t}</small>`;
+  $('#breathRounds').textContent = `Ronda ${BR.rounds + 1}`;
+}
+function breathStop() {
+  if (BR) clearInterval(BR.iv);
+  BR = null;
+  $('#breathBtn').textContent = 'Empezar';
+  $('#orb').style.transform = 'scale(.55)';
+  $('#breathLab').innerHTML = 'Listo<small>cuando quieras</small>';
+}
+$('#breathBtn').addEventListener('click', () => BR ? breathStop() : breathStart());
+
+/* 5-4-3-2-1 */
+const GROUND = [[5, 'cosas que puedes ver'], [4, 'cosas que puedes tocar'], [3, 'sonidos que puedes oír'], [2, 'olores que puedes notar'], [1, 'sabor que puedes sentir']];
+let gi = 0;
+function groundReset() { gi = 0; groundShow(); }
+function groundShow() {
+  if (gi >= GROUND.length) {
+    $('#gN').textContent = '✓'; $('#gTxt').textContent = 'Volviste al presente'; $('#gHelp').textContent = 'Fíjate cómo está ahora tu respiración. Puedes repetirlo cuando lo necesites.'; $('#gNext').textContent = 'Repetir';
+    return;
+  }
+  $('#gN').textContent = GROUND[gi][0]; $('#gTxt').textContent = GROUND[gi][1];
+  $('#gHelp').textContent = 'Nómbralas en voz baja o en tu cabeza, sin afán.'; $('#gNext').textContent = 'Listo, siguiente';
+}
+$('#gNext').addEventListener('click', () => { if (gi >= GROUND.length) groundReset(); else { gi++; groundShow(); } });
+
+/* Soltar */
+$('#releaseBtn').addEventListener('click', () => {
+  const t = $('#releaseTxt'); if (!t.value.trim()) return toast('Escribe primero lo que quieres soltar.');
+  const crisis = isCrisis(t.value);
+  t.classList.add('go');
+  setTimeout(() => { t.value = ''; t.classList.remove('go'); toast('Listo. Lo que soltaste no quedó guardado.'); if (crisis) openHelp(); }, 1400);
+});
+
+/* =========================================================
+   Inicio de la app
+   ========================================================= */
+route();
+</script>
+</body>
+</html>
